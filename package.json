@@ -4,7 +4,7 @@
   "main": "server.js",
   "scripts": {
     "dev": "concurrently \"npm run dev:server\" \"npm run dev:tailwind\"",
-    "dev:server": "NODE_ENV=development npx nodemon --ext ts --exec ts-node src/server.ts",
+    "dev:server": "NODE_ENV=development npx nodemon --ext ts --exec ts-node --files src/server.ts",
     "dev:tailwind": "postcss src/public/css/tailwind.css -o src/public/css/styles.css --watch",
     "build": "npx tsc && npm run copy-files",
     "copy-files": "cp -r src/views dist/views && cp -r src/public dist/public",

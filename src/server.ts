@@ -4,6 +4,7 @@ import passport from 'passport';
 import path from 'path';
 
 import config from './config';
+import configurePassport from './config/passport';
 import configureSession from './config/session';
 import errorHandler from './middleware/errorHandler';
 import configureHelmet from './middleware/helmet';
@@ -39,6 +40,9 @@ server.use(configureSession());
 
 // Passport session support
 server.use(passport.session());
+
+// Passport strategy
+configurePassport();
 
 // View engine
 server.set('views', path.join(__dirname, 'views'));
