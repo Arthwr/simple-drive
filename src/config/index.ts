@@ -2,10 +2,19 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
+function requireEnv(name: string): string {
+  const value = process.env[name];
+  if (!value) {
+    throw new Error(`Missing required environment varible: ${name}`);
+  }
+
+  return value;
+}
+
 export default {
-  environment: process.env.NODE_ENV,
-  port: process.env.PORT,
-  databaseUrl: process.env.DATABASE_URL,
-  session_secret: process.env.SESSION_SECRET,
-  dummyHash: process.env.DUMMY_HASH,
+  environment: process.env.NODE_ENV || 'development',
+  port: process.env.PORT || '3000',
+  databaseUrl: requireEnv('DATABASE_URL'),
+  session_secret: requireEnv('SESSION_SECRET'),
+  dummyHash: requireEnv('DUMMY_HASH'),
 };

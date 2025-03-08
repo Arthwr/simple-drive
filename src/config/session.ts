@@ -5,10 +5,6 @@ import session from 'express-session';
 import config from '.';
 
 const configureSession = () => {
-  if (!config.session_secret) {
-    throw new Error('SESSION_SECRET environment variable is required');
-  }
-
   return session({
     name: 'sd_sid',
     store: new PrismaSessionStore(new PrismaClient(), {
