@@ -3,7 +3,7 @@ import passport from 'passport';
 import { Strategy as LocalStrategy } from 'passport-local';
 
 import config from '.';
-import { UserService } from '../services/userService';
+import UserService from '../services/UserService';
 
 const configurePassport = () => {
   passport.use(

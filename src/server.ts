@@ -1,5 +1,5 @@
 import compression from 'compression';
-import express, { NextFunction, Request, Response } from 'express';
+import express from 'express';
 import passport from 'passport';
 import path from 'path';
 
@@ -9,6 +9,7 @@ import configureSession from './config/session';
 import errorHandler from './middleware/errorHandler';
 import configureHelmet from './middleware/helmet';
 import notFoundHandler from './middleware/notFoundHandler';
+import routes from './routes';
 
 const server = express();
 
@@ -49,9 +50,7 @@ server.set('views', path.join(__dirname, 'views'));
 server.set('view engine', 'ejs');
 
 // Routes
-server.use('/', (req: Request, res: Response, next: NextFunction) => {
-  res.render('pages/index');
-});
+server.use('/', routes);
 
 //  404
 server.use(notFoundHandler);
