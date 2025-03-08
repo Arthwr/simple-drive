@@ -12,3 +12,90 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+enum Action {
+  READ
+  WRITE
+  SHARE
+  DELETE
+}
+
+// Passport session
+model Session {
+  id        String   @id
+  sid       String   @unique
+  data      String   @db.Text
+  expiresAt DateTime
+}
+
+model User {
+  id        String         @id @default(uuid())
+  name      String         @default("friend")
+  email     String         @unique
+  password  String
+  createdAt DateTime       @default(now())
+  temporary Boolean        @default(false)
+  expiresAt DateTime?
+  roleId    String
+  role      Role           @relation(fields: [roleId], references: [id])
+  storage   Storage?
+  shared    SharedFolder[]
+}
+
+model Role {
+  id           String           @id @default(uuid())
+  name         String           @unique
+  storageLimit BigInt           @default(104857600) // 100mb
+  users        User[]
+  permissions  RolePermission[]
+}
+
+model RolePermission {
+  id     String @id @default(uuid())
+  roleId String
+  role   Role   @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  action Action
+}
+
+model Storage {
+  id      String   @id @default(uuid())
+  userId  String   @unique
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  folders Folder[]
+}
+
+model Folder {
+  id            String         @id @default(uuid())
+  name          String         @default("New Folder")
+  parentId      String?
+  parent        Folder?        @relation("FolderHierarchy", fields: [parentId], references: [id], onDelete: Cascade)
+  children      Folder[]       @relation("FolderHierarchy")
+  repositoryId  String
+  repository    Storage        @relation(fields: [repositoryId], references: [id], onDelete: Cascade)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  File          File[]
+  sharedFolders SharedFolder[]
+}
+
+model SharedFolder {
+  id        String   @id @default(uuid())
+  folderId  String
+  folder    Folder   @relation(fields: [folderId], references: [id], onDelete: Cascade)
+  userId    String
+  sharedBy  User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+  url       String   @unique
+}
+
+model File {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  size      BigInt
+  url       String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  folderId  String
+  folder    Folder   @relation(fields: [folderId], references: [id], onDelete: Cascade)
+}

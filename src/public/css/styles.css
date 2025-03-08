@@ -7,8 +7,12 @@
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
       "Courier New", monospace;
     --color-amber-200: oklch(0.924 0.12 95.746);
-    --color-amber-600: oklch(0.666 0.179 58.318);
+    --color-rose-400: oklch(0.712 0.194 13.428);
     --spacing: 0.25rem;
+    --text-lg: 1.125rem;
+    --text-lg--line-height: calc(1.75 / 1.125);
+    --text-5xl: 3rem;
+    --text-5xl--line-height: 1;
     --default-font-family: var(--font-sans);
     --default-font-feature-settings: var(--font-sans--font-feature-settings);
     --default-font-variation-settings: var(
@@ -174,20 +178,50 @@
   .mt-5 {
     margin-top: calc(var(--spacing) * 5);
   }
-  .flex {
-    display: flex;
+  .mb-10 {
+    margin-bottom: calc(var(--spacing) * 10);
+  }
+  .grid {
+    display: grid;
+  }
+  .inline-grid {
+    display: inline-grid;
+  }
+  .h-screen {
+    height: 100vh;
   }
   .transform {
     transform: var(--tw-rotate-x) var(--tw-rotate-y) var(--tw-rotate-z) var(--tw-skew-x) var(--tw-skew-y);
   }
+  .place-content-center {
+    place-content: center;
+  }
+  .gap-y-12 {
+    row-gap: calc(var(--spacing) * 12);
+  }
   .bg-amber-200 {
     background-color: var(--color-amber-200);
   }
-  .bg-amber-600 {
-    background-color: var(--color-amber-600);
-  }
   .text-center {
     text-align: center;
+  }
+  .text-5xl {
+    font-size: var(--text-5xl);
+    line-height: var(--tw-leading, var(--text-5xl--line-height));
+  }
+  .text-lg {
+    font-size: var(--text-lg);
+    line-height: var(--tw-leading, var(--text-lg--line-height));
+  }
+  .text-rose-400 {
+    color: var(--color-rose-400);
+  }
+  .hover\:underline {
+    &:hover {
+      @media (hover: hover) {
+        text-decoration-line: underline;
+      }
+    }
   }
 }
 @property --tw-rotate-x {

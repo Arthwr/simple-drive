@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<%- include("../partials/head", { title: "Error" } ) %>
+
+    <body>
+        <main class="grid h-screen place-content-center gap-y-12">
+            <div class="text-center">
+                <h1 class="text-5xl mb-10">Oops! Something went wrong</h1>
+                <div class="text-lg">
+                    <%= statusCode %>: <%= message %>
+                </div>
+            </div>
+            <a class="inline-grid text-center text-rose-400 hover:underline" href="/">Return home</a>
+        </main>
+    </body>
+
+</html>
