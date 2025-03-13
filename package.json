@@ -3,9 +3,10 @@
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
-    "dev": "concurrently \"npm run dev:server\" \"npm run dev:tailwind\"",
+    "dev": "concurrently \"npm run dev:server\" \"npm run dev:tailwind\" \"npm run dev:client\"",
     "dev:server": "NODE_ENV=development npx nodemon --ext ts --exec ts-node --files src/server.ts",
-    "dev:tailwind": "postcss src/public/css/tailwind.css -o src/public/css/styles.css --watch",
+    "dev:client": "tsc -w -p tsconfig.client.json",
+    "dev:tailwind": "postcss src/public/css/tailwind.css -o src/public/css/styles.css -w",
     "build": "npx tsc && npm run copy-files",
     "copy-files": "cp -r src/views dist/views && cp -r src/public dist/public",
     "start": "npm run build && NODE_ENV=production node dist/server.js",
