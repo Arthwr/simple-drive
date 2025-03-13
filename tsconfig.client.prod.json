@@ -1,0 +1,6 @@
+{
+  "extends": "./tsconfig.client.json",
+  "compilerOptions": {
+    "outDir": "dist/public/scripts"
+  }
+}

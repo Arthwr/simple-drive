@@ -6,9 +6,9 @@
     "dev": "concurrently \"npm run dev:server\" \"npm run dev:tailwind\" \"npm run dev:client\"",
     "dev:server": "NODE_ENV=development npx nodemon --ext ts --exec ts-node --files src/server.ts",
     "dev:client": "tsc -w -p tsconfig.client.json",
-    "dev:tailwind": "postcss src/public/css/tailwind.css -o src/public/css/styles.css -w",
-    "build": "npx tsc && npm run copy-files",
-    "copy-files": "cp -r src/views dist/views && cp -r src/public dist/public",
+    "dev:tailwind": "postcss src/public/assets/css/tailwind.css -o src/public/assets/css/styles.css -w",
+    "build": "npx tsc -p tsconfig.json && npx tsc -p tsconfig.client.prod.json && npm run copy-files",
+    "copy-files": "cp -r src/views dist/views && cp -r src/public/assets dist/public/assets",
     "start": "npm run build && NODE_ENV=production node dist/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

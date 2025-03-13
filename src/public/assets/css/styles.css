@@ -8,17 +8,8 @@
       "Courier New", monospace;
     --color-red-300: oklch(0.808 0.114 19.571);
     --color-red-400: oklch(0.704 0.191 22.216);
-    --color-amber-600: oklch(0.666 0.179 58.318);
-    --color-lime-100: oklch(0.967 0.067 122.328);
-    --color-lime-200: oklch(0.938 0.127 124.321);
-    --color-lime-300: oklch(0.897 0.196 126.665);
-    --color-lime-400: oklch(0.841 0.238 128.85);
-    --color-lime-500: oklch(0.768 0.233 130.85);
-    --color-lime-600: oklch(0.648 0.2 131.684);
     --color-green-500: oklch(0.723 0.219 149.579);
-    --color-cyan-100: oklch(0.956 0.045 203.388);
     --color-cyan-600: oklch(0.609 0.126 221.723);
-    --color-sky-50: oklch(0.977 0.013 236.62);
     --color-blue-300: oklch(0.809 0.105 251.813);
     --color-blue-400: oklch(0.707 0.165 254.624);
     --color-blue-500: oklch(0.623 0.214 259.815);
@@ -30,7 +21,6 @@
     --color-gray-600: oklch(0.446 0.03 256.802);
     --color-gray-700: oklch(0.373 0.034 259.733);
     --color-gray-800: oklch(0.278 0.033 256.848);
-    --color-zinc-100: oklch(0.967 0.001 286.375);
     --color-stone-50: oklch(0.985 0.001 106.423);
     --color-white: #fff;
     --spacing: 0.25rem;
@@ -360,17 +350,11 @@
   .bg-gray-50 {
     background-color: var(--color-gray-50);
   }
-  .bg-sky-50 {
-    background-color: var(--color-sky-50);
-  }
   .bg-stone-50 {
     background-color: var(--color-stone-50);
   }
   .bg-white {
     background-color: var(--color-white);
-  }
-  .bg-zinc-100 {
-    background-color: var(--color-zinc-100);
   }
   .px-4 {
     padding-inline: calc(var(--spacing) * 4);
@@ -441,14 +425,8 @@
     --tw-tracking: var(--tracking-wider);
     letter-spacing: var(--tracking-wider);
   }
-  .text-amber-600 {
-    color: var(--color-amber-600);
-  }
   .text-blue-500 {
     color: var(--color-blue-500);
-  }
-  .text-cyan-100 {
-    color: var(--color-cyan-100);
   }
   .text-cyan-600 {
     color: var(--color-cyan-600);
@@ -467,24 +445,6 @@
   }
   .text-gray-800 {
     color: var(--color-gray-800);
-  }
-  .text-lime-100 {
-    color: var(--color-lime-100);
-  }
-  .text-lime-200 {
-    color: var(--color-lime-200);
-  }
-  .text-lime-300 {
-    color: var(--color-lime-300);
-  }
-  .text-lime-400 {
-    color: var(--color-lime-400);
-  }
-  .text-lime-500 {
-    color: var(--color-lime-500);
-  }
-  .text-lime-600 {
-    color: var(--color-lime-600);
   }
   .text-red-400 {
     color: var(--color-red-400);
