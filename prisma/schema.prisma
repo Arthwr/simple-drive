@@ -13,7 +13,14 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Action {
+// Enums
+enum RoleEnum {
+  GUEST
+  MEMBER
+  ADMIN
+}
+
+enum ActionEnum {
   READ
   WRITE
   SHARE
@@ -28,6 +35,7 @@ model Session {
   expiresAt DateTime
 }
 
+// Models
 model User {
   id        String         @id @default(uuid())
   name      String         @default("friend")
@@ -44,17 +52,24 @@ model User {
 
 model Role {
   id           String           @id @default(uuid())
-  name         String           @unique
-  storageLimit BigInt           @default(104857600) // 100mb
+  name         RoleEnum         @unique
   users        User[]
   permissions  RolePermission[]
+  storageLimit StorageLimit?
+}
+
+model StorageLimit {
+  id      String  @id @default(uuid())
+  roleId  String  @unique
+  role    Role    @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  maxSize BigInt?
 }
 
 model RolePermission {
-  id     String @id @default(uuid())
+  id     String     @id @default(uuid())
   roleId String
-  role   Role   @relation(fields: [roleId], references: [id], onDelete: Cascade)
-  action Action
+  role   Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  action ActionEnum
 }
 
 model Storage {

@@ -1,7 +1,7 @@
 import { Router } from 'express';
 
-import registerRouter from './root/registerRoutes';
-import rootRoutes from './root/rootRoutes';
+import registerRouter from './registerRoutes';
+import rootRoutes from './rootRoutes';
 
 const routes = Router();
 

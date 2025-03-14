@@ -7,6 +7,7 @@ class UserRepository {
     this.prisma = prisma;
   }
 
+  // Read methods
   async findByEmail(userEmail: string): Promise<User | null> {
     return await this.prisma.user.findUnique({ where: { email: userEmail } });
   }
@@ -14,6 +15,15 @@ class UserRepository {
   async findById(userId: string): Promise<User | null> {
     return await this.prisma.user.findUnique({ where: { id: userId } });
   }
+
+  // // Write methods
+  // async addUser(email: string, password: string) {
+  //   return await this.prisma.user.create({
+  //     data: {
+  //       email: email,
+  //       password: password,
+  //   })
+  // }
 }
 
 export default UserRepository;

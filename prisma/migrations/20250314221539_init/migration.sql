@@ -1,5 +1,8 @@
 -- CreateEnum
-CREATE TYPE "Action" AS ENUM ('READ', 'WRITE', 'SHARE', 'DELETE');
+CREATE TYPE "RoleEnum" AS ENUM ('GUEST', 'MEMBER', 'ADMIN');
+
+-- CreateEnum
+CREATE TYPE "ActionEnum" AS ENUM ('READ', 'WRITE', 'SHARE', 'DELETE');
 
 -- CreateTable
 CREATE TABLE "Session" (
@@ -28,17 +31,25 @@ CREATE TABLE "User" (
 -- CreateTable
 CREATE TABLE "Role" (
     "id" TEXT NOT NULL,
-    "name" TEXT NOT NULL,
-    "storageLimit" BIGINT NOT NULL DEFAULT 104857600,
+    "name" "RoleEnum" NOT NULL,
 
     CONSTRAINT "Role_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "StorageLimit" (
+    "id" TEXT NOT NULL,
+    "roleId" TEXT NOT NULL,
+    "maxSize" BIGINT,
+
+    CONSTRAINT "StorageLimit_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "RolePermission" (
     "id" TEXT NOT NULL,
     "roleId" TEXT NOT NULL,
-    "action" "Action" NOT NULL,
+    "action" "ActionEnum" NOT NULL,
 
     CONSTRAINT "RolePermission_pkey" PRIMARY KEY ("id")
 );
@@ -98,6 +109,9 @@ CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 CREATE UNIQUE INDEX "Role_name_key" ON "Role"("name");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "StorageLimit_roleId_key" ON "StorageLimit"("roleId");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "Storage_userId_key" ON "Storage"("userId");
 
 -- CreateIndex
@@ -111,6 +125,9 @@ CREATE UNIQUE INDEX "File_url_key" ON "File"("url");
 
 -- AddForeignKey
 ALTER TABLE "User" ADD CONSTRAINT "User_roleId_fkey" FOREIGN KEY ("roleId") REFERENCES "Role"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "StorageLimit" ADD CONSTRAINT "StorageLimit_roleId_fkey" FOREIGN KEY ("roleId") REFERENCES "Role"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "RolePermission" ADD CONSTRAINT "RolePermission_roleId_fkey" FOREIGN KEY ("roleId") REFERENCES "Role"("id") ON DELETE CASCADE ON UPDATE CASCADE;

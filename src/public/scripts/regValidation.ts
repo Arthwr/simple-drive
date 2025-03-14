@@ -8,7 +8,7 @@ const validationMessages: Record<string, Record<string, string>> = {
   password: {
     valueMissing: 'You need to enter a password.',
     patternMismatch:
-      'Password must be at least 8 characters and contain a mix of letters and numbers.',
+      'Password must be at least 8 characters.',
   },
   'password-confirm': {
     valueMissing: 'Please confirm your password.',

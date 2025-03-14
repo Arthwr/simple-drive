@@ -1,6 +1,6 @@
 import asyncHandler from '../utils/asyncHandler';
 
-const getRoot = asyncHandler(async (req, res, next) => {
+const getRoot = asyncHandler(async (req, res) => {
   res.render('pages/index');
 });
 
