@@ -112,6 +112,9 @@ CREATE UNIQUE INDEX "Role_name_key" ON "Role"("name");
 CREATE UNIQUE INDEX "StorageLimit_roleId_key" ON "StorageLimit"("roleId");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "RolePermission_roleId_action_key" ON "RolePermission"("roleId", "action");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "Storage_userId_key" ON "Storage"("userId");
 
 -- CreateIndex

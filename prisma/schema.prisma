@@ -70,6 +70,8 @@ model RolePermission {
   roleId String
   role   Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
   action ActionEnum
+
+  @@unique([roleId, action])
 }
 
 model Storage {
