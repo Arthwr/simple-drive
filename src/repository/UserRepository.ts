@@ -1,4 +1,4 @@
-import { PrismaClient, User } from '@prisma/client';
+import { PrismaClient, RoleEnum, User } from '@prisma/client';
 
 class UserRepository {
   private prisma: PrismaClient;
@@ -17,13 +17,20 @@ class UserRepository {
   }
 
   // // Write methods
-  // async addUser(email: string, password: string) {
-  //   return await this.prisma.user.create({
-  //     data: {
-  //       email: email,
-  //       password: password,
-  //   })
-  // }
+  async addMember(email: string, password: string): Promise<User> {
+    return await this.prisma.user.create({
+      data: {
+        email,
+        password,
+        role: {
+          connect: { name: RoleEnum.MEMBER },
+        },
+        storage: {
+          create: {},
+        },
+      },
+    });
+  }
 }
 
 export default UserRepository;

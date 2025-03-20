@@ -1,13 +1,19 @@
-import { ErrorRequestHandler, NextFunction, Request, Response } from 'express';
+import { ErrorRequestHandler } from 'express';
 
-import { AppError } from '../errors/customErrors';
+import { AppError } from '../errors/AppError';
+import { NotifyError } from '../errors/NotifyError';
 
-const errorHandler: ErrorRequestHandler = (
-  err: Error,
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
+const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
+  if (err instanceof NotifyError) {
+    // Assign error message for user notification
+    req.flash('error', err.message);
+
+    // Safely store user return path to redirect
+    const returnPath = req.session.returnPath || '/';
+
+    return res.redirect(err.status, returnPath);
+  }
+
   let statusCode = 500;
   let message = 'Internal Server Error';
 
@@ -16,7 +22,6 @@ const errorHandler: ErrorRequestHandler = (
     message = err.message;
   }
 
-  console.error(err);
   res.status(statusCode).render('pages/error', { statusCode, message });
 };
 

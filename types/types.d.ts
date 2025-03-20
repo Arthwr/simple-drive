@@ -5,3 +5,17 @@ declare global {
     interface User extends PrismaUser {}
   }
 }
+
+declare module 'express-session' {
+  interface Session {
+    returnPath?: string;
+    flash?: Record<string, string>;
+  }
+}
+
+declare module 'express-serve-static-core' {
+  interface Request {
+    flash(type: string, message: string): void;
+    flash(type: string): string | undefined;
+  }
+}

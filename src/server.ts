@@ -6,7 +6,9 @@ import path from 'path';
 import config from './config';
 import configurePassport from './config/passport';
 import configureSession from './config/session';
+import captureReturnPath from './middleware/captureReturnPath';
 import errorHandler from './middleware/errorHandler';
+import flash from './middleware/flash';
 import configureHelmet from './middleware/helmet';
 import notFoundHandler from './middleware/notFoundHandler';
 import routes from './routes';
@@ -49,6 +51,12 @@ configurePassport();
 server.set('views', path.join(__dirname, 'views'));
 server.set('view engine', 'ejs');
 
+// Capture user path for redirects
+server.use(captureReturnPath);
+
+// Flash messages
+server.use(flash);
+
 // Routes
 server.use('/', routes);
 
@@ -62,3 +70,6 @@ server.use(errorHandler);
 server.listen(config.port, () => {
   console.log(`Server running at port ${config.port}`);
 });
+
+// Handle (delete) output .js files in public/scripts during run dev script
+// Check validation on submit (front-end)

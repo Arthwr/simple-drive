@@ -1,8 +1,8 @@
-import { NextFunction, Request, Response } from 'express';
+import { RequestHandler } from 'express';
 
-import { NotFoundError } from '../errors/customErrors';
+import { NotFoundError } from '../errors/AppError';
 
-const notFoundHandler = (req: Request, res: Response, next: NextFunction) => {
+const notFoundHandler: RequestHandler = (req, res, next) => {
   next(new NotFoundError());
 };
 

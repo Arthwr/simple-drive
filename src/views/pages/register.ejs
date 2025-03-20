@@ -6,7 +6,7 @@
     <body>
         <main class="h-screen bg-stone-50">
             <div class="container flex items-center justify-center min-h-screen px-6 mx-auto">
-                <form id="register" class="w-full max-w-xs" novalidate>
+                <form id="register" class="w-full max-w-xs" method="post" novalidate>
                     <div class="flex flex-col items-center gap-8 justify-center mx-auto">
                         <img class="w-auto" src="assets/img/drive.png" width="64" height="64" alt="">
                         <h1 class="font-medium text-center text-gray-800 text-2xl">
@@ -53,7 +53,7 @@
                     <div id="password-message" class="hidden pt-2 text-red-400" aria-live="polite"></div>
                     <div id="password-confirm" class="hidden pt-2 text-red-400" aria-live="polite"></div>
                     <div class="mt-6">
-                        <button
+                        <button type="submit"
                             class="w-full px-6 py-3 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-blue-500 rounded-lg hover:bg-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-50">
                             Sign Up
                         </button>

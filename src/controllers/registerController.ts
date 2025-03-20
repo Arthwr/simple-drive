@@ -1,3 +1,4 @@
+import userService from '../services/UserService';
 import asyncHandler from '../utils/asyncHandler';
 
 interface RegisterUserBody {
@@ -11,7 +12,6 @@ const getRegisterPage = asyncHandler(async (req, res) => {
 
 const postRegisterUser = asyncHandler(async (req, res) => {
   const { email, password }: RegisterUserBody = req.body;
-  // const postResult
 });
 
 export default { getRegisterPage, postRegisterUser };
