@@ -2,16 +2,15 @@ import { ErrorRequestHandler } from 'express';
 
 import { AppError } from '../errors/AppError';
 import { NotifyError } from '../errors/NotifyError';
+import notifyRedirect from '../utils/notifyRedirect';
 
 const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
   if (err instanceof NotifyError) {
     // Assign error message for user notification
     req.flash('error', err.message);
 
-    // Safely store user return path to redirect
-    const returnPath = req.session.returnPath || '/';
-
-    return res.redirect(err.status, returnPath);
+    // Determine redirect path based on error and request
+    return notifyRedirect(req, res, err);
   }
 
   let statusCode = 500;

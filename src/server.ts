@@ -6,7 +6,6 @@ import path from 'path';
 import config from './config';
 import configurePassport from './config/passport';
 import configureSession from './config/session';
-import captureReturnPath from './middleware/captureReturnPath';
 import errorHandler from './middleware/errorHandler';
 import flash from './middleware/flash';
 import configureHelmet from './middleware/helmet';
@@ -50,9 +49,6 @@ configurePassport();
 // View engine
 server.set('views', path.join(__dirname, 'views'));
 server.set('view engine', 'ejs');
-
-// Capture user path for redirects
-server.use(captureReturnPath);
 
 // Flash messages
 server.use(flash);

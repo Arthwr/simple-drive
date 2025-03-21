@@ -8,7 +8,6 @@ declare global {
 
 declare module 'express-session' {
   interface Session {
-    returnPath?: string;
     flash?: Record<string, string>;
   }
 }
