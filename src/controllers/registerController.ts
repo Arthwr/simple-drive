@@ -1,4 +1,5 @@
-import { UnexpectedRegistrationError } from '../errors/NotifyError';
+import { FlashMessages, FlashTypes } from '../config/constants';
+import { UnexpectedError } from '../errors/NotifyError';
 import userService from '../services/UserService';
 import asyncHandler from '../utils/asyncHandler';
 
@@ -16,10 +17,10 @@ const postRegisterUser = asyncHandler(async (req, res) => {
   const newUser = await userService.addUserMember(email, password);
 
   if (!newUser) {
-    throw new UnexpectedRegistrationError();
+    throw new UnexpectedError();
   }
 
-  req.flash('success', `Thank you for joining us! You can safely login now.`);
+  req.flash(FlashTypes.SUCCESS, FlashMessages.REGISTRATION_SUCCESS);
   res.status(201).redirect('/');
 });
 

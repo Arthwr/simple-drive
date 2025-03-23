@@ -1,1 +1,18 @@
 @import 'tailwindcss';
+
+@theme {
+  --animate-progress: progress 5s linear forwards;
+  --color-flash-error: oklch(0.637 0.237 25.331);
+  --color-flash-success: oklch(0.696 0.17 162.48);
+  --color-flash-warning: oklch(0.852 0.199 91.936);
+  --color-flash-info: oklch(0.623 0.214 259.815);
+
+  @keyframes progress {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-100%);
+    }
+  }
+}

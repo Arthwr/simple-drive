@@ -1,3 +1,5 @@
+import { FlashMessages } from '../config/constants';
+
 export class NotifyError extends Error {
   public status: number;
   public redirectTo?: string;
@@ -11,12 +13,12 @@ export class NotifyError extends Error {
 
 export class UserExistsError extends NotifyError {
   constructor() {
-    super('Email is unavaible or invalid', 409);
+    super(FlashMessages.REGISTRATION_FAILED_EMAIL_TAKEN, 302);
   }
 }
 
-export class UnexpectedRegistrationError extends NotifyError {
+export class UnexpectedError extends NotifyError {
   constructor() {
-    super('Registration failed. Please try again later', 500);
+    super(FlashMessages.UNEXPECTED_ERROR, 500);
   }
 }

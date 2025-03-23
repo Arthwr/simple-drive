@@ -9,8 +9,10 @@ import configureSession from './config/session';
 import errorHandler from './middleware/errorHandler';
 import flash from './middleware/flash';
 import configureHelmet from './middleware/helmet';
+import messageStore from './middleware/messageStore';
 import notFoundHandler from './middleware/notFoundHandler';
 import routes from './routes';
+import utils from './utils/utils';
 
 const server = express();
 
@@ -53,6 +55,11 @@ server.set('view engine', 'ejs');
 // Flash messages
 server.use(flash);
 
+// Flash message store
+server.use(messageStore);
+
+// Utilities
+server.locals.utils = utils;
 // Routes
 server.use('/', routes);
 
@@ -69,3 +76,4 @@ server.listen(config.port, () => {
 
 // Handle (delete) output .js files in public/scripts during run dev script
 // Check validation on submit (front-end)
+// Fix edge case where flash message will be stored if redirect fail

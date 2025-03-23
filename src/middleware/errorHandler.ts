@@ -6,9 +6,6 @@ import notifyRedirect from '../utils/notifyRedirect';
 
 const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
   if (err instanceof NotifyError) {
-    // Assign error message for user notification
-    req.flash('error', err.message);
-
     // Determine redirect path based on error and request
     return notifyRedirect(req, res, err);
   }
@@ -21,6 +18,7 @@ const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
     message = err.message;
   }
 
+  console.error(err);
   res.status(statusCode).render('pages/error', { statusCode, message });
 };
 

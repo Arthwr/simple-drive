@@ -1,9 +1,11 @@
 //  Simplified version of npm connect-flash: https://github.com/jaredhanson/connect-flash/
 import { Request, RequestHandler } from 'express';
 
+import { FlashTypes } from '../config/constants';
+
 function _flash(
   this: Request,
-  type: string,
+  type: FlashTypes,
   message?: string,
 ): string | undefined {
   if (!this.session) {
@@ -11,7 +13,11 @@ function _flash(
     return;
   }
 
-  const flashStore = this.session.flash || {};
+  if (!this.session.flash) {
+    this.session.flash = {};
+  }
+
+  const flashStore = this.session.flash;
 
   if (type && message) {
     flashStore[type] = message;

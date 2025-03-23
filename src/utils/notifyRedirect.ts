@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 
+import { FlashTypes } from '../config/constants';
 import { NotifyError } from '../errors/NotifyError';
 
 const notifyRedirect = (
@@ -7,14 +8,15 @@ const notifyRedirect = (
   res: Response,
   err: NotifyError,
 ): void => {
-  req.flash('error', err.message);
+  // Assign error message for user notification
+  req.flash(FlashTypes.ERROR, err.message);
 
   if (err.redirectTo) {
     return res.redirect(err.status, err.redirectTo);
   }
 
   if (req.method === 'POST') {
-    res.redirect(err.status, req.originalUrl);
+    return res.redirect(err.status, req.path);
   }
 
   return res.redirect(err.status, '/');
