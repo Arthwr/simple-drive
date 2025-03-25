@@ -60,7 +60,7 @@
     --default-mono-font-variation-settings: var(
       --font-mono--font-variation-settings
     );
-    --animate-progress: progress 5s linear forwards;
+    --animate-progress: progress 7s linear forwards;
     --color-flash-error: oklch(0.637 0.237 25.331);
     --color-flash-success: oklch(0.696 0.17 162.48);
     --color-flash-warning: oklch(0.852 0.199 91.936);

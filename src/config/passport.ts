@@ -4,12 +4,17 @@ import { Strategy as LocalStrategy } from 'passport-local';
 
 import config from '.';
 import UserService from '../services/UserService';
+import { FlashMessages, FlashTypes } from './constants';
 
 const configurePassport = () => {
   passport.use(
     new LocalStrategy(
-      { usernameField: 'email', passwordField: 'password' },
-      async (email, password, done) => {
+      {
+        usernameField: 'email',
+        passwordField: 'password',
+        passReqToCallback: true,
+      },
+      async (req, email, password, done) => {
         try {
           const user = await UserService.findUserByEmail(email);
           const hash = user ? user.password : config.dummyHash;
@@ -17,11 +22,13 @@ const configurePassport = () => {
           const match = await bcryptjs.compare(password, hash);
 
           if (!user || !match) {
-            return done(null, false, { message: 'Invalid email or password' });
+            req.flash(FlashTypes.ERROR, FlashMessages.LOGIN_FAILED);
+            return done(null, false);
           }
 
           return done(null, user);
         } catch (error) {
+          req.flash(FlashTypes.ERROR, FlashMessages.UNEXPECTED_ERROR);
           return done(error);
         }
       },

@@ -19,7 +19,7 @@ const notifyRedirect = (
     return res.redirect(err.status, req.path);
   }
 
-  return res.redirect(err.status, '/');
+  return res.redirect(err.status, '/login');
 };
 
 export default notifyRedirect;
