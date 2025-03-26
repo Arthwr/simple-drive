@@ -77,3 +77,4 @@ server.listen(config.port, () => {
 // Handle (delete) output .js files in public/scripts during run dev script
 // Check validation on submit (front-end)
 // Fix edge case where flash message will be stored if redirect fail
+// Change flash messages colors to something better (Success)

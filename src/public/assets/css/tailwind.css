@@ -1,6 +1,14 @@
 @import 'tailwindcss';
 
+@font-face {
+  font-family: 'Geist Sans';
+  src: url('/assets/fonts/Geist-Variable.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+}
+
 @theme {
+  --font-geist-sans: 'Geist Sans', sans-serif, -apple-system;
   --animate-progress: progress 7s linear forwards;
   --color-flash-error: oklch(0.637 0.237 25.331);
   --color-flash-success: oklch(0.696 0.17 162.48);
@@ -14,5 +22,11 @@
     to {
       transform: translateX(-100%);
     }
+  }
+}
+
+@layer {
+  body {
+    font-family: var(--font-geist-sans);
   }
 }
