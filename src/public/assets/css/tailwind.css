@@ -15,6 +15,13 @@
   --color-flash-warning: oklch(0.852 0.199 91.936);
   --color-flash-info: oklch(0.623 0.214 259.815);
 
+  /* shadcn colors */
+  --color-accent: oklch(0.929 0.013 255.508);
+  --color-muted: oklch(0.97 0.001 106.424);
+  --color-edge: oklch(0.903 0.009 0.75);
+  --color-secondary: oklch(0.97 0.001 106.424);
+  --color-input: oklch(0.923 0.003 48.717);
+
   @keyframes progress {
     from {
       transform: translateX(0);
