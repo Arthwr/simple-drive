@@ -2,10 +2,14 @@
 <html lang="en">
 <%- include("../partials/head", { title: "Simple Drive Dashboard" }) %>
 
-    <body>
+    <body class="bg-gray-50">
         <%- include("../partials/toast") %>
-            <main>
+            <main class="flex max-w-[120rem] mx-auto bg-white shadow">
                 <%- include("../partials/aside") %>
+                    <div id="workspace" class="flex grow flex-col px-8">
+                        <%- include("../partials/breadcrumbs") %>
+                            <%- include("../partials/dropfile") %>
+                    </div>
             </main>
     </body>
 

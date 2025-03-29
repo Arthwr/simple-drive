@@ -18,6 +18,7 @@
   /* shadcn colors */
   --color-accent: oklch(0.929 0.013 255.508);
   --color-muted: oklch(0.97 0.001 106.424);
+  --color-silence: oklch(0.551 0.023 264.4);
   --color-edge: oklch(0.903 0.009 0.75);
   --color-secondary: oklch(0.97 0.001 106.424);
   --color-input: oklch(0.923 0.003 48.717);

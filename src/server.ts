@@ -78,3 +78,6 @@ server.listen(config.port, () => {
 // Check validation on submit (front-end)
 // Fix edge case where flash message will be stored if redirect fail
 // Change flash messages colors to something better (Success)
+// Add pause for flash messages on hover or tab switch perhaps?
+// Move icon load from partials/icons to public for better consistency?
+// Fix simple drive on /dashboard hover animation
