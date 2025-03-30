@@ -1,41 +1,6 @@
-<aside class="flex-1 shrink-0 min-h-screen max-w-80 border-r py-6 px-6 border-edge">
+<aside class="flex-1 shrink-0 min-h-screen max-w-80 border-r py-6 px-4 border-edge">
     <nav>
-        <section class="border-b border-edge pb-8">
-            <div class="flex flex-col gap-10">
-                <div class="flex items-center justify-between">
-                    <a href="/dashboard">
-                        <div class="flex items-center justify-center gap-2 group">
-                            <img src="/assets/img/folder-icon.svg" width="24" height="24" alt="">
-                            <div class="relative">
-                                <h2
-                                    class="text-xl text-indigo-400 before:absolute before:left-0 before:bottom-1.5 before:w-full before:h-full before:bg-blue-300 before:transition-transform before:duration-200 before:ease-in before:origin-bottom before:scale-y-0 group-hover:before:scale-y-50 before:-z-10">
-                                    simple drive</h2>
-                            </div>
-                        </div>
-                    </a>
-                    <button class="inline-flex cursor-pointer rounded-md hover:bg-accent p-2">
-                        <img src="/assets/img/home-icon.svg" width="18" height="auto" alt="">
-                    </button>
-                </div>
-                <div class="flex flex-col gap-2 text-sm">
-                    <button
-                        class="inline-flex py-2 px-4 bg-secondary justify-center hover:bg-accent rounded-md w-full cursor-pointer">
-                        <div class="flex items-center justify-center gap-4 ">
-                            <img src="/assets/img/upload-icon.svg" width="16" height="16" alt="">
-                            <span>Upload Files</span>
-                        </div>
-                    </button>
-                    <button
-                        class="inline-flex py-2 px-4 justify-center cursor-pointer border border-input rounded-md hover:bg-accent w-full">
-                        <div class="flex items-center justify-center gap-4">
-                            <img src="/assets/img/aFolder-icon.svg" width="16" height="16" alt="">
-                            <span>New Folder</span>
-                        </div>
-                    </button>
-                </div>
-            </div>
-        </section>
-        <section>
-        </section>
+        <%- include("menu") %>
+            <%- include("tree") %>
     </nav>
 </aside>
