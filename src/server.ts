@@ -81,3 +81,4 @@ server.listen(config.port, () => {
 // Add pause for flash messages on hover or tab switch perhaps?
 // Move icon load from partials/icons to public for better consistency?
 // Fix simple drive on /dashboard hover animation
+// I don't really like /dashboard left top corner icon name colors combo. Maybe change icon, colors, font family and sizes.
