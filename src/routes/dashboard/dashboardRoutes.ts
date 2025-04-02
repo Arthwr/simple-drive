@@ -4,6 +4,6 @@ import dashboardController from '../../controllers/dashboard/dashboardController
 
 const dashboardRouter = Router();
 
-dashboardRouter.get('/', dashboardController.getDashboardPage);
+dashboardRouter.get('/:folderId?', dashboardController.getDashboardPage);
 
 export default dashboardRouter;

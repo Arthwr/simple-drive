@@ -1,4 +1,4 @@
-import { PrismaClient, RoleEnum, User } from '@prisma/client';
+import { Folder, PrismaClient, RoleEnum, Storage, User } from '@prisma/client';
 
 class UserRepository {
   private prisma: PrismaClient;
@@ -13,7 +13,15 @@ class UserRepository {
   }
 
   async findById(userId: string): Promise<User | null> {
-    return await this.prisma.user.findUnique({ where: { id: userId } });
+    return await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+  }
+
+  async getStorage(userId: string): Promise<Storage | null> {
+    return await this.prisma.storage.findUnique({
+      where: { userId },
+    });
   }
 
   // // Write methods
@@ -28,6 +36,20 @@ class UserRepository {
         storage: {
           create: {},
         },
+      },
+    });
+  }
+
+  async addFolder(
+    repositoryId: string,
+    parentId: string | null,
+    name: string,
+  ): Promise<Folder> {
+    return await this.prisma.folder.create({
+      data: {
+        repositoryId,
+        parentId,
+        name,
       },
     });
   }

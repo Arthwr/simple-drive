@@ -2,6 +2,7 @@ import bcryptjs from 'bcryptjs';
 
 import prisma from '../config/prismaClient';
 import { UserExistsError } from '../errors/NotifyError';
+import { NotifyError } from '../errors/NotifyError';
 import UserRepository from '../repository/UserRepository';
 
 class UserService {
@@ -34,6 +35,28 @@ class UserService {
     const hashedPassword = await bcryptjs.hash(password, 10);
 
     return await this.userRepo.addMember(userEmail, hashedPassword);
+  }
+
+  async addUserFolder(
+    userId: string,
+    parentFolderId: string | null,
+    folderName: string,
+  ) {
+    const storage = await userRepository.getStorage(userId);
+
+    if (!storage) {
+      throw new NotifyError(
+        'Failed to retrieve user storage. Please try again later.',
+        500,
+        '/dashboard',
+      );
+    }
+
+    return await userRepository.addFolder(
+      storage.id,
+      parentFolderId,
+      folderName,
+    );
   }
 }
 

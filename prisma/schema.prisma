@@ -83,6 +83,7 @@ model Storage {
 
 model Folder {
   id            String         @id @default(uuid())
+  publicId      String         @default(nanoid())
   name          String         @default("New Folder")
   parentId      String?
   parent        Folder?        @relation("FolderHierarchy", fields: [parentId], references: [id], onDelete: Cascade)
@@ -93,6 +94,8 @@ model Folder {
   updatedAt     DateTime       @updatedAt
   File          File[]
   sharedFolders SharedFolder[]
+
+  @@unique([repositoryId, publicId])
 }
 
 model SharedFolder {

@@ -12,4 +12,7 @@ export const FlashMessages = {
   LOGIN_FAILED: 'Invalid email or password',
   LOGIN_SUCCESS: 'Welcome back!',
   UNEXPECTED_ERROR: 'An unexpected error occured. Please try again later.',
+  STORAGE: {
+    FOLDER_SUCCES: 'New folder created!',
+  },
 };

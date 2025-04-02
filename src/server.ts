@@ -82,3 +82,6 @@ server.listen(config.port, () => {
 // Move icon load from partials/icons to public for better consistency?
 // Fix simple drive on /dashboard hover animation
 // I don't really like /dashboard left top corner icon name colors combo. Maybe change icon, colors, font family and sizes.
+// Implement input validation for reg/login & other routes
+// Structure Flash Message into subcategories
+// When i implement folders/files render - sort them against type (folder, file) and then alphabeticaly.

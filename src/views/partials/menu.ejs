@@ -16,20 +16,36 @@
             </button>
         </div>
         <div class="flex flex-col gap-2 text-sm">
-            <button
-                class="min-h-10 inline-flex py-2 px-4 bg-secondary justify-center hover:bg-accent rounded-md w-full cursor-pointer">
-                <div class="flex items-center justify-center gap-4">
-                    <img src="/assets/img/upload-icon.svg" width="16" height="16" alt="">
-                    <span>Upload Files</span>
-                </div>
-            </button>
-            <button
-                class="min-h-10 inline-flex py-2 px-4 justify-center cursor-pointer border border-input rounded-md hover:bg-accent w-full">
-                <div class="flex items-center justify-center gap-4">
-                    <img src="/assets/img/aFolder-icon.svg" width="16" height="16" alt="">
-                    <span>New Folder</span>
-                </div>
-            </button>
+            <form action="">
+                <button
+                    class="min-h-10 inline-flex py-2 px-4 bg-secondary justify-center hover:bg-accent rounded-md w-full cursor-pointer">
+                    <div class="flex items-center justify-center gap-4">
+                        <img src="/assets/img/upload-icon.svg" width="16" height="16" alt="">
+                        <span>Upload Files</span>
+                    </div>
+                </button>
+            </form>
+            <form class="flex flex-col gap-2" action="/folder" method="post">
+                <details class="flex flex-col gap-2 group">
+                    <summary
+                        class="select-none list-none cursor-pointer min-h-10 inline-flex py-2 px-4 justify-center border border-input rounded-md hover:bg-accent w-full group-open:rounded-b-none">
+                        <div class="flex items-center justify-center gap-4">
+                            <img src="/assets/img/aFolder-icon.svg" width="16" height="16" alt="">
+                            <span>New Folder</span>
+                        </div>
+                    </summary>
+                    <div>
+                        <label for="foldername" class="block text-sm text-gray-500">Folder Name</label>
+                        <div class="flex items-center gap-2 mt-2">
+                            <input id="foldername" name="foldername" type="text" placeholder="New Folder"
+                                class="block w-full placeholder-gray-400/70 rounded-lg border border-gray-200 bg-white px-5 py-2.5 text-gray-700 focus:border-blue-400 focus:outline-none focus:ring-blue-300 focus:ring-opacity-40">
+                            <button type="submit"
+                                class="cursor-pointer px-2 py-2 font-medium text-gray-600 transition-colors duration-200  hover:bg-accent rounded-lg"><img
+                                    src="/assets/img/check-tick.svg" width="24" height="auto" alt=""></button>
+                        </div>
+                    </div>
+                </details>
+            </form>
         </div>
     </div>
 </section>

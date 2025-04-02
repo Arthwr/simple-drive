@@ -6,6 +6,16 @@ declare global {
   }
 }
 
+declare module 'express' {
+  interface Request {
+    user?: PrismaUser;
+  }
+
+  interface AuthenticatedRequest extends Request {
+    user: PrismaUser;
+  }
+}
+
 declare module 'express-session' {
   interface Session {
     flash?: Record<string, string>;

@@ -5,6 +5,7 @@ import loginRoutes from './auth/loginRoutes';
 import registerRoutes from './auth/registerRoutes';
 import dashboardRoutes from './dashboard/dashboardRoutes';
 import indexRoutes from './index/indexRoutes';
+import folderRoutes from './storage/folderRoutes';
 
 const routes = Router();
 
@@ -15,5 +16,8 @@ routes.use('/register', registerRoutes);
 
 // Protected routes
 routes.use('/dashboard', isAuthenticated, dashboardRoutes);
+
+// ---- Folder manipulation
+routes.use('/folder', isAuthenticated, folderRoutes);
 
 export default routes;

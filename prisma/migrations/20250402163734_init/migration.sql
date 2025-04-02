@@ -65,6 +65,7 @@ CREATE TABLE "Storage" (
 -- CreateTable
 CREATE TABLE "Folder" (
     "id" TEXT NOT NULL,
+    "publicId" TEXT NOT NULL,
     "name" TEXT NOT NULL DEFAULT 'New Folder',
     "parentId" TEXT,
     "repositoryId" TEXT NOT NULL,
@@ -116,6 +117,9 @@ CREATE UNIQUE INDEX "RolePermission_roleId_action_key" ON "RolePermission"("role
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Storage_userId_key" ON "Storage"("userId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Folder_repositoryId_publicId_key" ON "Folder"("repositoryId", "publicId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "SharedFolder_url_key" ON "SharedFolder"("url");
