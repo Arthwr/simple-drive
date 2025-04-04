@@ -125,10 +125,10 @@ CREATE UNIQUE INDEX "Folder_repositoryId_publicId_key" ON "Folder"("repositoryId
 CREATE UNIQUE INDEX "SharedFolder_url_key" ON "SharedFolder"("url");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "File_name_key" ON "File"("name");
+CREATE UNIQUE INDEX "File_url_key" ON "File"("url");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "File_url_key" ON "File"("url");
+CREATE UNIQUE INDEX "File_folderId_name_key" ON "File"("folderId", "name");
 
 -- AddForeignKey
 ALTER TABLE "User" ADD CONSTRAINT "User_roleId_fkey" FOREIGN KEY ("roleId") REFERENCES "Role"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

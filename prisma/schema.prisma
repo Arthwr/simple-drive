@@ -78,7 +78,7 @@ model Storage {
   id      String   @id @default(uuid())
   userId  String   @unique
   user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  folders Folder[]
+  folders Folder[] @relation("FolderStorage")
 }
 
 model Folder {
@@ -89,10 +89,10 @@ model Folder {
   parent        Folder?        @relation("FolderHierarchy", fields: [parentId], references: [id], onDelete: Cascade)
   children      Folder[]       @relation("FolderHierarchy")
   repositoryId  String
-  repository    Storage        @relation(fields: [repositoryId], references: [id], onDelete: Cascade)
+  repository    Storage        @relation("FolderStorage", fields: [repositoryId], references: [id], onDelete: Cascade)
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
-  File          File[]
+  files         File[]
   sharedFolders SharedFolder[]
 
   @@unique([repositoryId, publicId])
@@ -111,11 +111,13 @@ model SharedFolder {
 
 model File {
   id        String   @id @default(uuid())
-  name      String   @unique
+  name      String
   size      BigInt
   url       String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   folderId  String
   folder    Folder   @relation(fields: [folderId], references: [id], onDelete: Cascade)
+
+  @@unique([folderId, name])
 }

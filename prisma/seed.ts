@@ -3,7 +3,7 @@ import { RoleEnum } from '@prisma/client';
 import { rolePermissions, storageLimits } from './config';
 import prisma from './prismaClient';
 
-async function setupRoles() {
+async function initializeUserRoles() {
   // Populate initial roles
   const roleRecords = Object.values(RoleEnum).map((role) => ({ name: role }));
   await prisma.role.createMany({
@@ -43,7 +43,7 @@ async function setupRoles() {
 }
 
 async function main() {
-  await setupRoles();
+  await initializeUserRoles();
 }
 
 main()

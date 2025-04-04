@@ -85,3 +85,5 @@ server.listen(config.port, () => {
 // Implement input validation for reg/login & other routes
 // Structure Flash Message into subcategories
 // When i implement folders/files render - sort them against type (folder, file) and then alphabeticaly.
+// Possibly test against each error scenario
+// Implement breadcrumbs functionality (search and render)

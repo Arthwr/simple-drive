@@ -1,4 +1,11 @@
-import { Folder, PrismaClient, RoleEnum, Storage, User } from '@prisma/client';
+import {
+  File,
+  Folder,
+  PrismaClient,
+  RoleEnum,
+  Storage,
+  User,
+} from '@prisma/client';
 
 class UserRepository {
   private prisma: PrismaClient;
@@ -8,25 +15,93 @@ class UserRepository {
   }
 
   // Read methods
-  async findByEmail(userEmail: string): Promise<User | null> {
-    return await this.prisma.user.findUnique({ where: { email: userEmail } });
+  async findUserByEmail(userEmail: string): Promise<User | null> {
+    return this.prisma.user.findUnique({ where: { email: userEmail } });
   }
 
-  async findById(userId: string): Promise<User | null> {
-    return await this.prisma.user.findUnique({
+  async findUserById(userId: string): Promise<User | null> {
+    return this.prisma.user.findUnique({
       where: { id: userId },
     });
   }
 
-  async getStorage(userId: string): Promise<Storage | null> {
-    return await this.prisma.storage.findUnique({
+  async findStorageByUserId(userId: string): Promise<Storage | null> {
+    return this.prisma.storage.findUnique({
       where: { userId },
     });
   }
 
-  // // Write methods
+  // ---- Get root level folder id
+  async findRootFolderId(repositoryId: string): Promise<string | null> {
+    const rootFolder = await this.prisma.folder.findFirst({
+      where: {
+        repositoryId,
+        parentId: null,
+      },
+      select: { id: true },
+    });
+
+    return rootFolder?.id ?? null;
+  }
+
+  // ---- Get folder id by its public id
+  async findFolderIdByPublicId(
+    repositoryId: string,
+    publicId: string,
+  ): Promise<string | null> {
+    const folder = await this.prisma.folder.findUnique({
+      where: {
+        repositoryId_publicId: {
+          repositoryId,
+          publicId,
+        },
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    return folder?.id ?? null;
+  }
+
+  // ---- Get root level folders and files of user repository
+  async findRootFolderWithContents(
+    repositoryId: string,
+  ): Promise<(Folder & { children: Folder[]; files: File[] }) | null> {
+    return this.prisma.folder.findFirst({
+      where: {
+        repositoryId,
+        parentId: null,
+      },
+      include: {
+        children: true,
+        files: true,
+      },
+    });
+  }
+
+  // ---- Get specific folder and its direct children/files
+  async findFolderWithContents(
+    repositoryId: string,
+    publicId: string,
+  ): Promise<(Folder & { children: Folder[]; files: File[] }) | null> {
+    return this.prisma.folder.findUnique({
+      where: {
+        repositoryId_publicId: {
+          repositoryId,
+          publicId,
+        },
+      },
+      include: {
+        children: true,
+        files: true,
+      },
+    });
+  }
+
+  // Write methods
   async addMember(email: string, password: string): Promise<User> {
-    return await this.prisma.user.create({
+    return this.prisma.user.create({
       data: {
         email,
         password,
@@ -34,7 +109,16 @@ class UserRepository {
           connect: { name: RoleEnum.MEMBER },
         },
         storage: {
-          create: {},
+          create: {
+            folders: {
+              create: [
+                {
+                  name: '__root__',
+                  parentId: null,
+                },
+              ],
+            },
+          },
         },
       },
     });
@@ -45,7 +129,8 @@ class UserRepository {
     parentId: string | null,
     name: string,
   ): Promise<Folder> {
-    return await this.prisma.folder.create({
+    // TO DO: Prevent duplicate name check
+    return this.prisma.folder.create({
       data: {
         repositoryId,
         parentId,
