@@ -41,7 +41,7 @@ class UserService {
     const storage = await userRepository.findStorageByUserId(userId);
 
     if (!storage) {
-      throw new NotifyError('User storage not found', 404);
+      throw new NotifyError('User storage not found', 500, '/dashboard');
     }
 
     let currentFolder: Folder | null = null;
@@ -55,7 +55,11 @@ class UserService {
       );
 
       if (!implicitRoot) {
-        throw new NotifyError('Cannot load root directory contents', 500);
+        throw new NotifyError(
+          'Cannot load root directory contents',
+          500,
+          '/dashboard',
+        );
       }
 
       currentFolder = null;
@@ -69,7 +73,7 @@ class UserService {
       );
 
       if (!folderData) {
-        throw new NotifyError('Folder not found', 404);
+        throw new NotifyError('Folder not found', 500, '/dashboard');
       }
 
       currentFolder = folderData;
