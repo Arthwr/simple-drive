@@ -1,4 +1,4 @@
-import { FlashTypes } from '../config/constants';
+import { FlashMessages, FlashTypes } from '../config/constants';
 import asyncHandler from '../utils/asyncHandler';
 
 const messageStore = asyncHandler(async (req, res, next) => {
@@ -12,7 +12,6 @@ const messageStore = asyncHandler(async (req, res, next) => {
       break;
     }
   }
-
   next();
 });
 

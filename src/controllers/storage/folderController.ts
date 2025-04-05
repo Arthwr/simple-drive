@@ -7,12 +7,17 @@ import asyncHandler from '../../utils/asyncHandler';
 const postNewFolder = asyncHandler<AuthenticatedRequest>(
   async (req, res, next) => {
     const userId = req.user.id;
-    const folderName = req.body.foldername;
-    const parentPublicFolderId = req.params.publicFolderId;
+    const folderName = req.body.folderName;
+    const parentPublicFolderId = req.body.folderId || null;
 
     await userService.addUserFolder(userId, parentPublicFolderId, folderName);
     req.flash(FlashTypes.SUCCESS, FlashMessages.STORAGE.FOLDER_SUCCES);
-    res.redirect('/dashboard');
+
+    const redirectPath = parentPublicFolderId
+      ? `/dashboard/${parentPublicFolderId}`
+      : '/dashboard';
+
+    res.redirect(redirectPath);
   },
 );
 

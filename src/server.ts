@@ -90,3 +90,4 @@ server.listen(config.port, () => {
 // Implement size calculation for folders.
 // Folder @updatedAt right now only checks time of Folder model being updated itself,
 //  but not his relations. Implement bump function
+// Fix bug with flash messages appearing again during browser back redirect
