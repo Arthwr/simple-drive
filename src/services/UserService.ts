@@ -8,6 +8,7 @@ import UserRepository from '../repository/UserRepository';
 
 interface DirectoryViewData {
   currentFolder: Folder | null;
+  parentFolder: Folder | null;
   folders: Folder[];
   files: File[];
   breadcrumbs: Folder[];
@@ -45,6 +46,7 @@ class UserService {
     }
 
     let currentFolder: Folder | null = null;
+    let parentFolder: Folder | null = null;
     let folders: Folder[] = [];
     let files: File[] = [];
     let breadcrumbs: Folder[] = [];
@@ -63,6 +65,7 @@ class UserService {
       }
 
       currentFolder = null;
+      parentFolder = null;
       folders = implicitRoot.children;
       files = implicitRoot.files;
       breadcrumbs = [];
@@ -77,12 +80,13 @@ class UserService {
       }
 
       currentFolder = folderData;
+      parentFolder = folderData.parent;
       folders = folderData.children;
       files = folderData.files;
       breadcrumbs = []; // Implement ancestors search function from repository
     }
 
-    return { currentFolder, folders, files, breadcrumbs };
+    return { currentFolder, parentFolder, folders, files, breadcrumbs };
   }
 
   // Write methods

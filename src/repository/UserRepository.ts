@@ -84,7 +84,10 @@ class UserRepository {
   async findFolderWithContents(
     repositoryId: string,
     publicId: string,
-  ): Promise<(Folder & { children: Folder[]; files: File[] }) | null> {
+  ): Promise<
+    | (Folder & { children: Folder[]; files: File[]; parent: Folder | null })
+    | null
+  > {
     return this.prisma.folder.findUnique({
       where: {
         repositoryId_publicId: {
@@ -93,6 +96,7 @@ class UserRepository {
         },
       },
       include: {
+        parent: true,
         children: true,
         files: true,
       },
