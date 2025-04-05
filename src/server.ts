@@ -84,6 +84,9 @@ server.listen(config.port, () => {
 // I don't really like /dashboard left top corner icon name colors combo. Maybe change icon, colors, font family and sizes.
 // Implement input validation for reg/login & other routes
 // Structure Flash Message into subcategories
-// When i implement folders/files render - sort them against type (folder, file) and then alphabeticaly.
+// During folders/files render - sort them against type (folder, file) and then alphabeticaly.
 // Possibly test against each error scenario
 // Implement breadcrumbs functionality (search and render)
+// Implement size calculation for folders.
+// Folder @updatedAt right now only checks time of Folder model being updated itself,
+//  but not his relations. Implement bump function
