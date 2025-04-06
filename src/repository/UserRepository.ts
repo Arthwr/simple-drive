@@ -7,6 +7,8 @@ import {
   User,
 } from '@prisma/client';
 
+import { ParentFolderInfo } from '../types/directory.types';
+
 class UserRepository {
   private prisma: PrismaClient;
 
@@ -42,6 +44,23 @@ class UserRepository {
     });
 
     return rootFolder?.id ?? null;
+  }
+
+  // ---- Get parent folder
+  async findParentFolderById(
+    parentId: string,
+  ): Promise<ParentFolderInfo | null> {
+    return this.prisma.folder.findUnique({
+      where: {
+        id: parentId,
+      },
+      select: {
+        id: true,
+        publicId: true,
+        name: true,
+        parentId: true,
+      },
+    });
   }
 
   // ---- Get folder id by its public id

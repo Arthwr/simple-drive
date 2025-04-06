@@ -5,14 +5,8 @@ import prisma from '../config/prismaClient';
 import { UserExistsError } from '../errors/NotifyError';
 import { NotifyError } from '../errors/NotifyError';
 import UserRepository from '../repository/UserRepository';
-
-interface DirectoryViewData {
-  currentFolder: Folder | null;
-  parentFolder: Folder | null;
-  folders: Folder[];
-  files: File[];
-  breadcrumbs: Folder[];
-}
+import { ParentFolderInfo } from '../types/directory.types';
+import { DirectoryViewData } from '../types/directory.types';
 
 class UserService {
   private userRepo: UserRepository;
@@ -35,6 +29,25 @@ class UserService {
     return existingUser !== null;
   }
 
+  async getFolderAncestors(startFolder: Folder): Promise<ParentFolderInfo[]> {
+    const ancestors: ParentFolderInfo[] = [];
+    let currentParentId: string | null = startFolder.parentId;
+
+    while (currentParentId) {
+      const parentInfo =
+        await this.userRepo.findParentFolderById(currentParentId);
+
+      if (!parentInfo || !parentInfo.parentId) {
+        break;
+      }
+
+      ancestors.push(parentInfo);
+      currentParentId = parentInfo.parentId;
+    }
+
+    return ancestors.reverse();
+  }
+
   async getDirectoryData(
     userId: string,
     publicFolderId?: string,
@@ -49,7 +62,7 @@ class UserService {
     let parentFolder: Folder | null = null;
     let folders: Folder[] = [];
     let files: File[] = [];
-    let breadcrumbs: Folder[] = [];
+    let breadcrumbs: ParentFolderInfo[] = [];
 
     if (!publicFolderId) {
       const implicitRoot = await userRepository.findRootFolderWithContents(
@@ -83,7 +96,7 @@ class UserService {
       parentFolder = folderData.parent;
       folders = folderData.children;
       files = folderData.files;
-      breadcrumbs = []; // Implement ancestors search function from repository
+      breadcrumbs = await this.getFolderAncestors(currentFolder);
     }
 
     return { currentFolder, parentFolder, folders, files, breadcrumbs };
