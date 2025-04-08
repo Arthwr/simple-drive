@@ -15,10 +15,6 @@ const notifyRedirect = (
     return res.status(err.status).redirect(err.redirectTo);
   }
 
-  if (req.method === 'POST') {
-    return res.status(err.status).redirect(req.path);
-  }
-
   return res.status(err.status).redirect('/');
 };
 

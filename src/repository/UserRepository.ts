@@ -7,6 +7,7 @@ import {
   User,
 } from '@prisma/client';
 
+import { NotifyError } from '../errors/NotifyError';
 import { ParentFolderInfo } from '../types/directory.types';
 
 class UserRepository {
@@ -31,6 +32,22 @@ class UserRepository {
     return this.prisma.storage.findUnique({
       where: { userId },
     });
+  }
+
+  async isFolderNameUnique(
+    name: string,
+    parentId: string | null,
+    repositoryId: string,
+  ): Promise<boolean> {
+    const count = await this.prisma.folder.count({
+      where: {
+        name,
+        parentId,
+        repositoryId,
+      },
+    });
+
+    return count === 0;
   }
 
   // ---- Get root level folder id
@@ -152,7 +169,6 @@ class UserRepository {
     parentId: string | null,
     name: string,
   ): Promise<Folder> {
-    // TO DO: Prevent duplicate name check
     return this.prisma.folder.create({
       data: {
         repositoryId,

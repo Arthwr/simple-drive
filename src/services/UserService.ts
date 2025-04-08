@@ -150,6 +150,22 @@ class UserService {
       implicitFolderId = parentFolderId;
     }
 
+    const unique = await this.userRepo.isFolderNameUnique(
+      folderName,
+      implicitFolderId,
+      storage.id,
+    );
+
+    if (!unique) {
+      throw new NotifyError(
+        'A folder with that name already exists in this location',
+        409,
+        parentPublicFolderId
+          ? `/dashboard/${parentPublicFolderId}`
+          : '/dashboard',
+      );
+    }
+
     return await userRepository.addFolder(
       storage.id,
       implicitFolderId,

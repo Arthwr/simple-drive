@@ -91,3 +91,5 @@ server.listen(config.port, () => {
 // Folder @updatedAt right now only checks time of Folder model being updated itself,
 //  but not his relations. Implement bump function
 // Fix bug with flash messages appearing again during browser back redirect
+// Tune in specific item acception for upload
+// Files should be in custom field before uploaded
