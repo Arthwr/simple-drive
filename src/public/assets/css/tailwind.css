@@ -7,8 +7,16 @@
   font-style: normal;
 }
 
+@font-face {
+  font-family: 'Open Sans';
+  src: url('/assets/fonts/Open-Sans.ttf') format('truetype');
+  font-weight: 300 800;
+  font-style: normal;
+}
+
 @theme {
-  --font-geist-sans: 'Geist Sans', sans-serif, -apple-system;
+  --font-geist-sans: 'Geist Sans', sans-serif, -apple-system, system-ui;
+  --font-open-sans: 'Open Sans', sans-serif, -apple-system, system-ui;
   --animate-progress: progress 7s linear forwards;
   --color-flash-error: oklch(0.637 0.237 25.331);
   --color-flash-success: oklch(0.696 0.17 162.48);
