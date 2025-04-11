@@ -86,7 +86,6 @@ server.listen(config.port, () => {
 // Structure Flash Message into subcategories
 // During folders/files render - sort them against type (folder, file) and then alphabeticaly.
 // Possibly test against each error scenario
-// Implement breadcrumbs functionality (search and render)
 // Implement size calculation for folders.
 // Folder @updatedAt right now only checks time of Folder model being updated itself,
 //  but not his relations. Implement bump function

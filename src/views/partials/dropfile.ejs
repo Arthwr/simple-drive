@@ -1,10 +1,48 @@
 <div id="dropfile" class="relative border-2 border-dashed border-gray-300 rounded-lg p-8 text-center mb-8">
     <form class="flex flex-col items-center gap-2">
-        <img src="/assets/img/upload-icon.svg" width="36" height="auto" alt="">
-        <p class="text-gray-600">Drag and drop files here</p>
+        <img src="/assets/img/upload-icon.svg" width="24" height="auto" alt="">
+        <p class="text-gray-700">Drag and drop files here</p>
         <p class="text-sm text-silence">or</p>
         <label for="ufile" class="text-blue-600 hover:text-blue-500 text-sm cursor-pointer">Browse Files</label>
         <input class="hidden" type="file" id="ufile" name="ufile" multiple
             accept="image/*, audio/*, application/*, .pdf, .doc, .docx, .xls, .xlsx, .txt" href="#">
     </form>
+</div>
+<div class="bg-white rounded-lg shadow mb-8">
+    <div class="px-4 py-2 border-b border-gray-200">
+        <div class="flex justify-between items-center">
+            <h3 class="text-lg font-semibold text-gray-700">Files Preview</h3>
+            <button
+                class="inline-flex px-3 py-1.5 items-center gap-2 cursor-pointer border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-400 hover:bg-indigo-500">
+                <img src="/assets/img/confirm-tick-icon.svg" alt="">
+                <span>Confirm Upload</span>
+            </button>
+        </div>
+    </div>
+    <div class="divide-y divide-gray-200">
+        <div class="px-4 py-2 flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <img src="/assets/img/file-dir-icon.svg" width="20" height="auto" alt="">
+                <div>
+                    <p class="text-sm text-gray-700">Frieren.png</p>
+                    <p class="text-sm text-gray-500">1.16 MB</p>
+                </div>
+            </div>
+            <button class="p-1 hover:bg-accent rounded-full cursor-pointer">
+                <img src="/assets/img/x-close-icon.svg" width="16" height="auto" alt="">
+            </button>
+        </div>
+        <div class="px-4 py-2 flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <img src="/assets/img/file-dir-icon.svg" width="20" height="auto" alt="">
+                <div>
+                    <p class="text-sm text-gray-700">Emilia-tan.jpg</p>
+                    <p class="text-sm text-gray-500">2.42 MB</p>
+                </div>
+            </div>
+            <button class="p-1 hover:bg-accent rounded-full cursor-pointer">
+                <img src="/assets/img/x-close-icon.svg" width="16" height="auto" alt="">
+            </button>
+        </div>
+    </div>
 </div>
