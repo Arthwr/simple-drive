@@ -10,6 +10,22 @@ function formatFileSize(bytes: number): string {
   );
 }
 
+function handleFilePreviewClick(event: MouseEvent) {
+  const removeButton = (event.target as HTMLElement).closest(
+    'button',
+  ) as HTMLButtonElement;
+  if (
+    !removeButton ||
+    !(event.currentTarget as HTMLElement).contains(removeButton)
+  )
+    return;
+
+  const fileElement = removeButton.closest('.file-item');
+  if (!fileElement) return;
+
+  fileElement.remove();
+}
+
 function handleFiles(this: HTMLInputElement) {
   const fileList: FileList | null = this.files;
 
@@ -19,7 +35,7 @@ function handleFiles(this: HTMLInputElement) {
     'file-item-template',
   ) as HTMLTemplateElement;
   const container = document.getElementById('file-preview-list') as HTMLElement;
-  const fragmentList = document.createDocumentFragment();
+  const fragmentFilesList = document.createDocumentFragment();
   container.innerHTML = '';
 
   if (template && container) {
@@ -35,11 +51,11 @@ function handleFiles(this: HTMLInputElement) {
       if (fileSizeElement)
         fileSizeElement.textContent = formatFileSize(file.size);
 
-      fragmentList.appendChild(singleFileClone);
+      fragmentFilesList.appendChild(singleFileClone);
     });
   }
 
-  container.appendChild(fragmentList);
+  container.appendChild(fragmentFilesList);
 }
 
 export default function setupFilesPreview() {
@@ -48,4 +64,12 @@ export default function setupFilesPreview() {
   if (!fileInput) return;
 
   fileInput.addEventListener('change', handleFiles);
+
+  const previewList = document.getElementById(
+    'file-preview-list',
+  ) as HTMLElement;
+
+  if (!previewList) return;
+
+  previewList.addEventListener('click', handleFilePreviewClick);
 }
