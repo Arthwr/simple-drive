@@ -18,7 +18,7 @@ routes.use('/register', registerRoutes);
 // Protected routes
 routes.use('/dashboard', isAuthenticated, dashboardRoutes);
 
-// ---- Folder manipulation
+// ---- Folder and files manipulation
 routes.use('/folder', isAuthenticated, folderRoutes);
 routes.use('/upload', isAuthenticated, uploadRoutes);
 

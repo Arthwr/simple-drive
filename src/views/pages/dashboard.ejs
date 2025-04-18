@@ -4,14 +4,15 @@
 
     <body class="bg-gray-50">
         <%- include("../partials/toast") %>
-            <main class="flex max-w-[120rem] mx-auto bg-main shadow-xl">
-                <%- include("../partials/aside") %>
-                    <div id="workspace" class="flex grow flex-col px-8">
-                        <%- include("../partials/breadcrumbs") %>
-                            <%- include("../partials/dropfile") %>
-                                <%- include("../partials/directory") %>
-                    </div>
-            </main>
+            <%- include("../partials/templates/toastTemplate") %>
+                <main class="flex max-w-[120rem] mx-auto bg-main shadow-xl">
+                    <%- include("../partials/aside") %>
+                        <div id="workspace" class="flex grow flex-col px-8">
+                            <%- include("../partials/breadcrumbs") %>
+                                <%- include("../partials/dropfile") %>
+                                    <%- include("../partials/directory") %>
+                        </div>
+                </main>
     </body>
 
 </html>

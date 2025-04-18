@@ -90,3 +90,4 @@ server.listen(config.port, () => {
 // Fix bug with flash messages appearing again during browser back redirect
 // Tune in specific item acception for upload
 // Files should be in custom field before uploaded
+// Remove elements folder

@@ -118,6 +118,4 @@ model File {
   updatedAt DateTime @updatedAt
   folderId  String
   folder    Folder   @relation(fields: [folderId], references: [id], onDelete: Cascade)
-
-  @@unique([folderId, name])
 }

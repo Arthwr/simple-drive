@@ -1,3 +1,6 @@
+import config from '.';
+import formatFileSize from '../utils/formatFileSize';
+
 export enum FlashTypes {
   ERROR = 'error',
   SUCCESS = 'success',
@@ -12,6 +15,8 @@ export const FlashMessages = {
   LOGIN_FAILED: 'Invalid email or password',
   LOGIN_SUCCESS: 'Welcome back!',
   UNEXPECTED_ERROR: 'An unexpected error occured. Please try again later.',
+  FILE_NUM_LIMIT: `Maximum file upload number is ${config.file_num_limit}`,
+  FILE_SIZE_LIMIT: `Maximum file upload size is ${formatFileSize(config.file_size_limit)}`,
   STORAGE: {
     FOLDER_SUCCES: 'New folder created!',
   },

@@ -7,7 +7,7 @@ const postUploadFile = asyncHandler<AuthenticatedRequest>(
     // We receive req.files
     // We then process, optionally filter and throw error on wrong files / wrong size / max files
     // We do other stuff to store it on 3rd party host
-    next();
+    res.redirect('/dashboard');
   },
 );
 
