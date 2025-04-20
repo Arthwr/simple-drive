@@ -12,7 +12,7 @@ const upload = multer({
   },
 });
 
-const uploadFiles = upload.array('ufile', 3);
+const uploadFiles = upload.array('ufile');
 
 function uploadFilesMiddleware(
   req: Request,
@@ -20,8 +20,11 @@ function uploadFilesMiddleware(
   next: NextFunction,
 ) {
   uploadFiles(req, res, (err) => {
-    if (!err) next();
+    if (!err) {
+      return next();
+    }
 
+    // Handle multer specific errors
     if (err instanceof multer.MulterError) {
       if (err.code === 'LIMIT_FILE_COUNT') {
         const notifyFileLimit = new NotifyError(
@@ -42,14 +45,15 @@ function uploadFilesMiddleware(
 
         return next(notifyFileSize);
       }
-    } else {
-      const unexpectedError = new NotifyError(
-        FlashMessages.UNEXPECTED_ERROR,
-        500,
-      );
-
-      return next(unexpectedError);
     }
+
+    // Handle other errors
+    const unexpectedError = new NotifyError(
+      FlashMessages.UNEXPECTED_ERROR,
+      500,
+    );
+
+    return next(unexpectedError);
   });
 }
 

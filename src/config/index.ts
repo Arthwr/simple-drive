@@ -19,4 +19,7 @@ export default {
   databaseUrl: requireEnv('DATABASE_URL'),
   session_secret: requireEnv('SESSION_SECRET'),
   dummyHash: requireEnv('DUMMY_HASH'),
+  supabase_url: requireEnv('SUPABASE_URL'),
+  supabase_private_key: requireEnv('SUPABASE_PRIVATE_KEY'),
+  supabase_bucket: requireEnv('SUPABASE_BUCKET'),
 };

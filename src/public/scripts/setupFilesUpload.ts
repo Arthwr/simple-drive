@@ -41,6 +41,8 @@ const toastMessageTemplate = document.getElementById(
   'toast-template',
 ) as HTMLTemplateElement;
 
+const folderInput = document.getElementById('folder-id') as HTMLInputElement;
+
 function formatFileSize(bytes: number): string {
   if (bytes === 0) return '0 bytes';
 
@@ -140,13 +142,16 @@ function handleFileRemovalClick(event: MouseEvent) {
 function handleFilesUpload(filesPayload: FileMap[]) {
   if (!filesPayload || filesPayload.length === 0) return;
 
+  if (!folderInput) return;
+
   const formData = new FormData();
+  const folderId = folderInput.value;
 
   filesPayload.forEach(({ index, file }) => {
     formData.append('ufile', file);
   });
 
-  fetch('/upload', {
+  fetch(`/upload/${folderId}`, {
     method: 'POST',
     body: formData,
     headers: {
@@ -190,6 +195,10 @@ function handleFiles(this: HTMLInputElement) {
 
   if (!fileList || fileList.length === 0) {
     updatePreviewVisibility();
+    return;
+  }
+
+  if (!fileList) {
     return;
   }
 

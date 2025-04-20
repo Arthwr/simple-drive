@@ -7,7 +7,6 @@ import {
   User,
 } from '@prisma/client';
 
-import { NotifyError } from '../errors/NotifyError';
 import { ParentFolderInfo } from '../types/directory.types';
 
 class UserRepository {
@@ -174,6 +173,22 @@ class UserRepository {
         repositoryId,
         parentId,
         name,
+      },
+    });
+  }
+
+  async addFile(
+    name: string,
+    size: bigint,
+    url: string,
+    folderId: string,
+  ): Promise<File> {
+    return this.prisma.file.create({
+      data: {
+        name,
+        size,
+        url,
+        folderId,
       },
     });
   }

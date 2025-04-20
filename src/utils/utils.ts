@@ -1,3 +1,5 @@
+import formatFileSize from './formatFileSize';
+
 function capitalize(string: string): string {
   if (!string) return '';
 
@@ -8,4 +10,4 @@ function formatDate(date: Date): string {
   return date.toISOString().split('T')[0];
 }
 
-export default { capitalize, formatDate };
+export default { capitalize, formatDate, formatFileSize };

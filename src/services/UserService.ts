@@ -52,7 +52,7 @@ class UserService {
     userId: string,
     publicFolderId?: string,
   ): Promise<DirectoryViewData> {
-    const storage = await userRepository.findStorageByUserId(userId);
+    const storage = await this.userRepo.findStorageByUserId(userId);
 
     if (!storage) {
       throw new NotifyError('User storage not found', 500, '/dashboard');
@@ -65,7 +65,7 @@ class UserService {
     let breadcrumbs: ParentFolderInfo[] = [];
 
     if (!publicFolderId) {
-      const implicitRoot = await userRepository.findRootFolderWithContents(
+      const implicitRoot = await this.userRepo.findRootFolderWithContents(
         storage.id,
       );
 
@@ -110,7 +110,7 @@ class UserService {
 
     const hashedPassword = await bcryptjs.hash(password, 10);
 
-    return await this.userRepo.addMember(userEmail, hashedPassword);
+    return this.userRepo.addMember(userEmail, hashedPassword);
   }
 
   async addUserFolder(
@@ -118,13 +118,13 @@ class UserService {
     parentPublicFolderId: string | null,
     folderName: string,
   ) {
-    const storage = await userRepository.findStorageByUserId(userId);
+    const storage = await this.userRepo.findStorageByUserId(userId);
 
     if (!storage) {
       throw new NotifyError('User storage not found', 404);
     }
 
-    let implicitFolderId: string | null = null;
+    let implicitFolderId: string;
 
     if (!parentPublicFolderId) {
       const rootFolderId = await this.userRepo.findRootFolderId(storage.id);
@@ -166,11 +166,44 @@ class UserService {
       );
     }
 
-    return await userRepository.addFolder(
-      storage.id,
-      implicitFolderId,
-      folderName,
-    );
+    return this.userRepo.addFolder(storage.id, implicitFolderId, folderName);
+  }
+
+  async addUserFile(
+    userId: string,
+    fileName: string,
+    fileSize: bigint,
+    fileUrl: string,
+    folderPublicId: string | null,
+  ) {
+    const storage = await this.userRepo.findStorageByUserId(userId);
+
+    if (!storage) {
+      throw new NotifyError('User storage not found', 404);
+    }
+
+    let implicitFolderId: string;
+
+    if (!folderPublicId) {
+      const rootFolderId = await this.userRepo.findRootFolderId(storage.id);
+      if (!rootFolderId) {
+        throw new NotifyError('Cannot find directory to create file in', 500);
+      }
+
+      implicitFolderId = rootFolderId;
+    } else {
+      const folderId = await this.userRepo.findFolderIdByPublicId(
+        storage.id,
+        folderPublicId,
+      );
+      if (!folderId) {
+        throw new NotifyError('Cannot find directory to create file in', 500);
+      }
+
+      implicitFolderId = folderId;
+    }
+
+    return this.userRepo.addFile(fileName, fileSize, fileUrl, implicitFolderId);
   }
 }
 
