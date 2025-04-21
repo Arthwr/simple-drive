@@ -139,7 +139,7 @@ function handleFileRemovalClick(event: MouseEvent) {
   }
 }
 
-function handleFilesUpload(filesPayload: FileMap[]) {
+function handleFilesUpload() {
   if (!filesPayload || filesPayload.length === 0) return;
 
   if (!folderInput) return;
@@ -150,6 +150,9 @@ function handleFilesUpload(filesPayload: FileMap[]) {
   filesPayload.forEach(({ index, file }) => {
     formData.append('ufile', file);
   });
+
+  const buttonSpinner = previewContainer.querySelector('.confirm-spinner');
+  buttonSpinner?.classList.remove('hidden');
 
   fetch(`/upload/${folderId}`, {
     method: 'POST',
@@ -184,6 +187,11 @@ function handleFilesUpload(filesPayload: FileMap[]) {
     })
     .catch((err) => {
       console.error('Upload error: ', err);
+    })
+    .finally(() => {
+      filesPayload = [];
+      updatePreviewVisibility();
+      buttonSpinner?.classList.add('hidden');
     });
 }
 
@@ -242,7 +250,5 @@ export default function setupFilesUpload() {
 
   fileInput.addEventListener('change', handleFiles);
   previewList.addEventListener('click', handleFileRemovalClick);
-  confirmButton.addEventListener('click', () =>
-    handleFilesUpload(filesPayload),
-  );
+  confirmButton.addEventListener('click', () => handleFilesUpload());
 }

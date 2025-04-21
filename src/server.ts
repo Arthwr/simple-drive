@@ -60,6 +60,7 @@ server.use(messageStore);
 
 // Utilities
 server.locals.utils = utils;
+
 // Routes
 server.use('/', routes);
 

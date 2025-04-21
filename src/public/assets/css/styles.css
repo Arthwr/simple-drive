@@ -55,6 +55,7 @@
     --tracking-wider: 0.05em;
     --radius-md: 0.375rem;
     --radius-lg: 0.5rem;
+    --animate-spin: spin 1s linear infinite;
     --default-transition-duration: 150ms;
     --default-transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     --default-font-family: var(--font-sans);
@@ -340,6 +341,10 @@
   .inline-grid {
     display: inline-grid;
   }
+  .size-5 {
+    width: calc(var(--spacing) * 5);
+    height: calc(var(--spacing) * 5);
+  }
   .h-1 {
     height: calc(var(--spacing) * 1);
   }
@@ -428,6 +433,9 @@
   .animate-progress {
     animation: var(--animate-progress);
   }
+  .animate-spin {
+    animation: var(--animate-spin);
+  }
   .cursor-pointer {
     cursor: pointer;
   }
@@ -436,9 +444,6 @@
   }
   .grid-cols-\[minmax\(125px\,3fr\)_minmax\(100px\,2fr\)_minmax\(150px\,3fr\)_minmax\(80px\,1fr\)\] {
     grid-template-columns: minmax(125px,3fr) minmax(100px,2fr) minmax(150px,3fr) minmax(80px,1fr);
-  }
-  .grid-cols-\[minmax\(200px\,3fr\)_minmax\(100px\,2fr\)_minmax\(150px\,3fr\)_minmax\(80px\,1fr\)\] {
-    grid-template-columns: minmax(200px,3fr) minmax(100px,2fr) minmax(150px,3fr) minmax(80px,1fr);
   }
   .flex-col {
     flex-direction: column;
@@ -505,9 +510,6 @@
   }
   .self-end {
     align-self: flex-end;
-  }
-  .justify-self-center {
-    justify-self: center;
   }
   .justify-self-end {
     justify-self: flex-end;
@@ -823,8 +825,14 @@
       color: var(--color-gray-500);
     }
   }
+  .opacity-25 {
+    opacity: 25%;
+  }
   .opacity-50 {
     opacity: 50%;
+  }
+  .opacity-75 {
+    opacity: 75%;
   }
   .opacity-80 {
     opacity: 80%;
@@ -1212,6 +1220,11 @@
   syntax: "*";
   initial-value: "";
   inherits: false;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 @keyframes progress {
   from {
