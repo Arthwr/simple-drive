@@ -43,6 +43,12 @@ const toastMessageTemplate = document.getElementById(
 
 const folderInput = document.getElementById('folder-id') as HTMLInputElement;
 
+function resetUploadUI() {
+  filesPayload = [];
+  updatePreviewVisibility();
+  previewContainer.querySelector('.confirm-spinner')?.classList.add('hidden');
+}
+
 function formatFileSize(bytes: number): string {
   if (bytes === 0) return '0 bytes';
 
@@ -182,16 +188,15 @@ function handleFilesUpload() {
       const message = data.message;
 
       if (type && message) {
-        showToastNotification(type, message);
+        localStorage.setItem('upload-toast', JSON.stringify({ type, message }));
+        location.reload();
       }
     })
     .catch((err) => {
       console.error('Upload error: ', err);
     })
     .finally(() => {
-      filesPayload = [];
-      updatePreviewVisibility();
-      buttonSpinner?.classList.add('hidden');
+      resetUploadUI();
     });
 }
 
@@ -201,16 +206,8 @@ function handleFiles(this: HTMLInputElement) {
   previewList.innerHTML = '';
   filesPayload = [];
 
-  if (!fileList || fileList.length === 0) {
+  if (!fileList || fileList.length === 0 || !fileItemTemplate || !previewList) {
     updatePreviewVisibility();
-    return;
-  }
-
-  if (!fileList) {
-    return;
-  }
-
-  if (!fileItemTemplate || !previewList) {
     return;
   }
 
@@ -243,6 +240,15 @@ function handleFiles(this: HTMLInputElement) {
   previewList.appendChild(fragmentFilesList);
   updatePreviewVisibility();
 }
+
+window.addEventListener('DOMContentLoaded', () => {
+  const toastData = localStorage.getItem('upload-toast');
+  if (toastData) {
+    const { type, message } = JSON.parse(toastData);
+    showToastNotification(type, message);
+    localStorage.removeItem('upload-toast');
+  }
+});
 
 export default function setupFilesUpload() {
   if (!fileInput || !previewContainer || !fileItemTemplate || !confirmButton)

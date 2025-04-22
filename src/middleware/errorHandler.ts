@@ -25,7 +25,7 @@ const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
     statusCode = err.status;
     message = err.message;
   }
-  console.log(req.originalUrl);
+
   console.error(err);
   res.status(statusCode).render('pages/error', { statusCode, message });
 };

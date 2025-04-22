@@ -1,6 +1,24 @@
 import config from '.';
 import formatFileSize from '../utils/formatFileSize';
 
+export const FileExtTypes: Record<string, string[]> = {
+  doc: ['.doc', '.docx', '.odt', '.rtf', '.txt', '.tex', '.wpd', '.pages', '.md'],
+  pdf: ['.pdf'],
+  mus: ['.mp3', '.wav', '.flac', '.aac', '.ogg', '.wma', '.alac', '.m4a'],
+  image: [
+    '.jpg',
+    '.jpeg',
+    '.png',
+    '.gif',
+    '.bmp',
+    '.tiff',
+    '.webp',
+    '.svg',
+    '.heic',
+    '.raw',
+  ],
+};
+
 export enum FlashTypes {
   ERROR = 'error',
   SUCCESS = 'success',
