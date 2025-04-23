@@ -1,4 +1,5 @@
 import { AuthenticatedRequest } from 'express';
+import path from 'node:path';
 import { v4 as uuidv4 } from 'uuid';
 
 import config from '../../config';
@@ -7,8 +8,7 @@ import supabase from '../../config/supabaseClient';
 import { NotifyError } from '../../errors/NotifyError';
 import userService from '../../services/UserService';
 import asyncHandler from '../../utils/asyncHandler';
-
-import path = require('path');
+import fixMulterEncoding from '../../utils/fixMulterEncoding';
 
 async function uploadFile(file: Express.Multer.File, userId: string) {
   const fileExt = path.extname(file.originalname);
@@ -23,7 +23,7 @@ async function uploadFile(file: Express.Multer.File, userId: string) {
 
   if (error) {
     throw new NotifyError(
-      `Failed to upload file: ${file.originalname}. Please try again.`,
+      `Failed to upload file: ${fixMulterEncoding(file.originalname)}. Please try again.`,
       500,
     );
   }
@@ -62,7 +62,11 @@ const postUploadFile = asyncHandler<AuthenticatedRequest>(
           uploadedPaths.push(filePath);
 
           const fileUrl = await buildFileUrl(filePath);
-          return { name: file.originalname, size: file.size, url: fileUrl };
+          return {
+            name: fixMulterEncoding(file.originalname),
+            size: file.size,
+            url: fileUrl,
+          };
         }),
       );
 
