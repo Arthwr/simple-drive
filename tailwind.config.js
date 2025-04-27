@@ -12,6 +12,7 @@ module.exports = {
     'text-flash-success',
     'text-flash-warning',
     'text-flash-info',
+    'pl-4',
   ],
   plugins: [],
 };

@@ -48,6 +48,85 @@ class UserService {
     return ancestors.reverse();
   }
 
+  async traverseFolders(folderId: string): Promise<TreeFolder> {
+    const folderContents = await this.userRepo.findFolderContentById(folderId);
+
+    if (!folderContents) {
+      throw new NotifyError(`Couldn't find folder during tree render`, 500);
+    }
+
+    let children: TreeFolder[] | undefined = undefined;
+
+    if (folderContents.children && folderContents.children.length > 0) {
+      children = await Promise.all(
+        folderContents.children.map(async (folder) =>
+          this.traverseFolders(folder.id),
+        ),
+      );
+    }
+
+    return {
+      name: folderContents.name,
+      publicUrl: folderContents.publicId,
+      files: folderContents?.files.map((file) => ({ name: file.name })),
+      children: children,
+    };
+  }
+
+  async getRootFolderTree(
+    rootFolderId: string,
+  ): Promise<{ folders: TreeFolder[]; files: TreeFile[] } | undefined> {
+    const rootContent = await this.userRepo.findFolderContentById(rootFolderId);
+
+    if (!rootContent) {
+      throw new NotifyError('Root folder not found', 500);
+    }
+
+    let tree: {
+      folders: TreeFolder[];
+      files: TreeFile[];
+    } = {
+      folders: [],
+      files: [],
+    };
+
+    if (rootContent.files && rootContent.files.length > 0) {
+      tree.files = rootContent.files.map((file) => ({ name: file.name }));
+    }
+
+    if (rootContent.children) {
+      tree.folders = await Promise.all(
+        rootContent.children.map(async (folder) =>
+          this.traverseFolders(folder.id),
+        ),
+      );
+    }
+
+    return tree;
+  }
+
+  async getUserFolderHierarchy(userId: string) {
+    const storage = await this.userRepo.findStorageByUserId(userId);
+
+    if (!storage) {
+      throw new NotifyError('User storage not found', 500, '/dashboard');
+    }
+
+    const rootFolder = await this.userRepo.findRootFolderWithContents(
+      storage.id,
+    );
+
+    if (!rootFolder) {
+      throw new NotifyError(
+        'Cannot load root directory contents',
+        500,
+        '/dashboard',
+      );
+    }
+
+    return this.getRootFolderTree(rootFolder.id);
+  }
+
   async getDirectoryData(
     userId: string,
     publicFolderId?: string,

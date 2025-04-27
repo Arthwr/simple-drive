@@ -1,6 +1,7 @@
 import { Router } from 'express';
 
 import isAuthenticated from '../middleware/isAuthenticated';
+import apiRouter from './api/apiRoutes';
 import loginRoutes from './auth/loginRoutes';
 import registerRoutes from './auth/registerRoutes';
 import dashboardRoutes from './dashboard/dashboardRoutes';
@@ -21,5 +22,8 @@ routes.use('/dashboard', isAuthenticated, dashboardRoutes);
 // ---- Folder and files manipulation
 routes.use('/folder', isAuthenticated, folderRoutes);
 routes.use('/upload', isAuthenticated, uploadRoutes);
+
+// API for different stuff (tree structure and etc)
+routes.use('/api', isAuthenticated, apiRouter);
 
 export default routes;

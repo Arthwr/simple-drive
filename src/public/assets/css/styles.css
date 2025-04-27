@@ -6,9 +6,11 @@
       "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
       "Courier New", monospace;
+    --color-red-200: oklch(0.885 0.062 18.334);
     --color-red-300: oklch(0.808 0.114 19.571);
     --color-red-400: oklch(0.704 0.191 22.216);
     --color-green-500: oklch(0.723 0.219 149.579);
+    --color-blue-200: oklch(0.882 0.059 254.128);
     --color-blue-300: oklch(0.809 0.105 251.813);
     --color-blue-400: oklch(0.707 0.165 254.624);
     --color-blue-500: oklch(0.623 0.214 259.815);
@@ -692,8 +694,8 @@
   .pl-2 {
     padding-left: calc(var(--spacing) * 2);
   }
-  .pl-6 {
-    padding-left: calc(var(--spacing) * 6);
+  .pl-4 {
+    padding-left: calc(var(--spacing) * 4);
   }
   .text-center {
     text-align: center;
@@ -896,16 +898,132 @@
       border-bottom-left-radius: 0;
     }
   }
+  .before\:absolute {
+    &::before {
+      content: var(--tw-content);
+      position: absolute;
+    }
+  }
+  .before\:top-0 {
+    &::before {
+      content: var(--tw-content);
+      top: calc(var(--spacing) * 0);
+    }
+  }
+  .before\:top-1\/2 {
+    &::before {
+      content: var(--tw-content);
+      top: calc(1/2 * 100%);
+    }
+  }
+  .before\:bottom-0 {
+    &::before {
+      content: var(--tw-content);
+      bottom: calc(var(--spacing) * 0);
+    }
+  }
+  .before\:left-4 {
+    &::before {
+      content: var(--tw-content);
+      left: calc(var(--spacing) * 4);
+    }
+  }
   .before\:mx-2 {
     &::before {
       content: var(--tw-content);
       margin-inline: calc(var(--spacing) * 2);
     }
   }
+  .before\:h-\[0\.5px\] {
+    &::before {
+      content: var(--tw-content);
+      height: 0.5px;
+    }
+  }
+  .before\:h-\[1px\] {
+    &::before {
+      content: var(--tw-content);
+      height: 1px;
+    }
+  }
+  .before\:h-\[80\%\] {
+    &::before {
+      content: var(--tw-content);
+      height: 80%;
+    }
+  }
+  .before\:w-\[1px\] {
+    &::before {
+      content: var(--tw-content);
+      width: 1px;
+    }
+  }
+  .before\:w-\[2px\] {
+    &::before {
+      content: var(--tw-content);
+      width: 2px;
+    }
+  }
+  .before\:w-\[3px\] {
+    &::before {
+      content: var(--tw-content);
+      width: 3px;
+    }
+  }
+  .before\:w-\[8px\] {
+    &::before {
+      content: var(--tw-content);
+      width: 8px;
+    }
+  }
+  .before\:w-\[10px\] {
+    &::before {
+      content: var(--tw-content);
+      width: 10px;
+    }
+  }
+  .before\:-translate-y-1\/2 {
+    &::before {
+      content: var(--tw-content);
+      --tw-translate-y: calc(calc(1/2 * 100%) * -1);
+      translate: var(--tw-translate-x) var(--tw-translate-y);
+    }
+  }
+  .before\:transform {
+    &::before {
+      content: var(--tw-content);
+      transform: var(--tw-rotate-x) var(--tw-rotate-y) var(--tw-rotate-z) var(--tw-skew-x) var(--tw-skew-y);
+    }
+  }
+  .before\:bg-blue-200 {
+    &::before {
+      content: var(--tw-content);
+      background-color: var(--color-blue-200);
+    }
+  }
+  .before\:bg-blue-400 {
+    &::before {
+      content: var(--tw-content);
+      background-color: var(--color-blue-400);
+    }
+  }
+  .before\:bg-red-200 {
+    &::before {
+      content: var(--tw-content);
+      background-color: var(--color-red-200);
+    }
+  }
   .before\:text-silence {
     &::before {
       content: var(--tw-content);
       color: var(--color-silence);
+    }
+  }
+  .before\:content-\[\'\'\] {
+    &::before {
+      content: var(--tw-content);
+      --tw-content: '';
+      content: var(--tw-content);
     }
   }
   .before\:content-\[\'\/\'\] {

@@ -79,6 +79,20 @@ class UserRepository {
     });
   }
 
+  async findFolderContentById(
+    folderId: string,
+  ): Promise<(Folder & { children: Folder[]; files: File[] }) | null> {
+    return this.prisma.folder.findUnique({
+      where: {
+        id: folderId,
+      },
+      include: {
+        children: true,
+        files: true,
+      },
+    });
+  }
+
   // ---- Get folder id by its public id
   async findFolderIdByPublicId(
     repositoryId: string,

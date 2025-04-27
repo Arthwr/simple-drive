@@ -1,37 +1,36 @@
-<section id="tree" class="mt-4">
-    <div class="w-full text-sm space-y-1">
-        <button
-            class="min-h-10 cursor-pointer flex items-center justify-start gap-2 px-4 py-2 font-medium transition-colors hover:bg-accent rounded-md w-full">
-            <img src="/assets/img/tree-folder.svg" width="18" height="auto" alt="">
-            <span>Root</span>
-        </button>
-        <div class="flex flex-col text-gray-500">
+<%# Tree folder structure templates %>
+    <template id="folder-node">
+        <div class="folder-group flex flex-col text-gray-500">
             <button
-                class="flex gap-2 items-center justify-start px-2 py-1 transition-colors rounded-md hover:bg-accent/60 hover:text-black cursor-pointer">
-                <img src="/assets/img/tree-closed.svg" width="16" height="auto" alt="">
-                <img src="/assets/img/tree-subfolder.svg" width="18" height="auto" alt="">
-                <span>Documents</span>
+                class="flex w-full gap-2 items-center justify-start px-2 py-1 transition-colors rounded-md hover:bg-accent/60 hover:text-black cursor-pointer">
+                <img class="chevron" src="/assets/img/tree-closed.svg" width="16" height="auto" alt="">
+                <img src="/assets/img/tree-subfolder.svg" width="16" height="auto" alt="">
+                <span class="node-name text-sm text-gray-500 truncate">Folder Name</span>
             </button>
-        </div>
-        <div class="flex flex-col text-gray-500">
-            <button
-                class="flex gap-2 items-center justify-start px-2 py-1 transition-colors rounded-md hover:bg-accent/60 hover:text-black cursor-pointer">
-                <img src="/assets/img/tree-open.svg" width="16" height="auto" alt="">
-                <img src="/assets/img/tree-subfolder.svg" width="18" height="auto" alt="">
-                <span>Music</span>
-            </button>
-            <div class="flex flex-col px-2">
-                <div class="flex gap-2 items-center pl-6 py-1 cursor-pointer rounded-md hover:bg-accent/60 hover:text-black">
-                    <img src="/assets/img/tree-mp3.svg" width="18" height="auto" alt="">
-                    <span>Jazz.mp3</span>
-                </div>
-            </div>
-            <div class="flex flex-col px-2">
-                <div class="flex gap-2 items-center pl-6 py-1 cursor-pointer rounded-md hover:bg-accent/60 hover:text-black">
-                    <img src="/assets/img/tree-mp3.svg" width="18" height="auto" alt="">
-                    <span>Rock.mp3</span>
-                </div>
+            <div
+                class="children-group relative flex flex-col hidden before:content-[''] before:absolute before:top-0 before:bottom-0 before:left-4 before:w-[1px] before:bg-blue-200">
             </div>
         </div>
-    </div>
-</section>
+    </template>
+    <template id="file-node">
+        <div class="file-group flex flex-col text-gray-500 relative before:content-[''] before:absolute before:top-1/2 before:w-[8px] before:h-[1px] before:bg-blue-200 before:transform before:-translate-y-1/2"">
+            <button
+                class=" flex w-full gap-2 items-center justify-start px-3 py-1 transition-colors rounded-md
+            hover:bg-accent/60 hover:text-black cursor-pointer">
+            <img src="/assets/img/file-dir-icon.svg" width="16" height="auto" alt="">
+            <span class="node-name text-sm text-gray-500 truncate">File Name</span>
+            </button>
+        </div>
+    </template>
+
+    <%# Tree section %>
+        <section id="tree" class="mt-4">
+            <div class="w-full text-sm space-y-1">
+                <div
+                    class="min-h-10 flex items-center justify-start gap-2 px-4 py-2 font-medium transition-colors  w-full">
+                    <img src="/assets/img/tree-folder.svg" width="18" height="auto" alt="">
+                    <span class="text-sm text-gray-500">Root</span>
+                </div>
+            </div>
+            <div id="tree-view" class="flex flex-col space-y-1"></div>
+        </section>
