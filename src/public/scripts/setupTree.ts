@@ -9,24 +9,53 @@ interface TreeFolder {
   children?: TreeFolder[];
 }
 
+let clickTimeout: ReturnType<typeof setTimeout> | null = null;
+
 function handleTreeClick(event: MouseEvent) {
   const target = event.target as HTMLElement;
   const expandButton = target.closest('.folder-group > button');
 
   if (!expandButton) return;
 
-  const childGroup = expandButton.nextElementSibling as HTMLElement;
+  if (clickTimeout) {
+    clearTimeout(clickTimeout);
+    clickTimeout = null;
+  }
 
-  if (childGroup) {
-    childGroup.classList.toggle('hidden');
-    const chevronIcon = expandButton.querySelector(
-      '.chevron',
-    ) as HTMLImageElement;
-    if (childGroup.classList.contains('hidden')) {
-      chevronIcon.src = '/assets/img/tree-closed.svg';
-    } else {
-      chevronIcon.src = '/assets/img/tree-open.svg';
+  clickTimeout = setTimeout(() => {
+    const childGroup = expandButton.nextElementSibling as HTMLElement;
+
+    if (childGroup) {
+      childGroup.classList.toggle('hidden');
+      const chevronIcon = expandButton.querySelector(
+        '.chevron',
+      ) as HTMLImageElement;
+      if (childGroup.classList.contains('hidden')) {
+        chevronIcon.src = '/assets/img/tree-closed.svg';
+      } else {
+        chevronIcon.src = '/assets/img/tree-open.svg';
+      }
     }
+
+    clickTimeout = null;
+  }, 150);
+}
+
+function handleTreeDoubleClick(event: MouseEvent) {
+  const target = event.target as HTMLElement;
+  const button = target.closest('.folder-group > button') as HTMLButtonElement;
+
+  if (!button) return;
+
+  if (clickTimeout) {
+    clearTimeout(clickTimeout);
+    clickTimeout = null;
+  }
+
+  const folderId = button.dataset.folderId;
+
+  if (folderId) {
+    window.location.href = `/dashboard/${folderId}`;
   }
 }
 
@@ -57,6 +86,10 @@ function buildTree(
     const folderGroupClone = folderNodeTemplate.content.cloneNode(
       true,
     ) as DocumentFragment;
+
+    const folderButton = folderGroupClone.querySelector(
+      'button',
+    ) as HTMLElement;
     const folderNameElement = folderGroupClone.querySelector(
       '.node-name',
     ) as HTMLElement;
@@ -65,6 +98,7 @@ function buildTree(
       '.children-group',
     ) as HTMLElement;
 
+    folderButton.dataset.folderId = folder.publicUrl;
     childrenGroupElement.classList.add(`pl-${currentIndentationLevel}`);
 
     if (folder.children && folder.children.length > 0) {
@@ -111,6 +145,7 @@ function buildTree(
   treeBase.append(fragmentTreeStructure);
 
   treeBase.addEventListener('click', handleTreeClick);
+  treeBase.addEventListener('dblclick', handleTreeDoubleClick);
 }
 
 export default async function setupTree() {
@@ -127,7 +162,6 @@ export default async function setupTree() {
     const data = await response.json();
     const treeStructure = data.tree;
 
-    console.log(treeStructure);
     buildTree(treeStructure);
   } catch (error) {
     console.error(error);

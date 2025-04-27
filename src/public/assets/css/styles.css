@@ -6,7 +6,6 @@
       "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
       "Courier New", monospace;
-    --color-red-200: oklch(0.885 0.062 18.334);
     --color-red-300: oklch(0.808 0.114 19.571);
     --color-red-400: oklch(0.704 0.191 22.216);
     --color-green-500: oklch(0.723 0.219 149.579);
@@ -934,22 +933,10 @@
       margin-inline: calc(var(--spacing) * 2);
     }
   }
-  .before\:h-\[0\.5px\] {
-    &::before {
-      content: var(--tw-content);
-      height: 0.5px;
-    }
-  }
   .before\:h-\[1px\] {
     &::before {
       content: var(--tw-content);
       height: 1px;
-    }
-  }
-  .before\:h-\[80\%\] {
-    &::before {
-      content: var(--tw-content);
-      height: 80%;
     }
   }
   .before\:w-\[1px\] {
@@ -958,28 +945,10 @@
       width: 1px;
     }
   }
-  .before\:w-\[2px\] {
-    &::before {
-      content: var(--tw-content);
-      width: 2px;
-    }
-  }
-  .before\:w-\[3px\] {
-    &::before {
-      content: var(--tw-content);
-      width: 3px;
-    }
-  }
   .before\:w-\[8px\] {
     &::before {
       content: var(--tw-content);
       width: 8px;
-    }
-  }
-  .before\:w-\[10px\] {
-    &::before {
-      content: var(--tw-content);
-      width: 10px;
     }
   }
   .before\:-translate-y-1\/2 {
@@ -999,18 +968,6 @@
     &::before {
       content: var(--tw-content);
       background-color: var(--color-blue-200);
-    }
-  }
-  .before\:bg-blue-400 {
-    &::before {
-      content: var(--tw-content);
-      background-color: var(--color-blue-400);
-    }
-  }
-  .before\:bg-red-200 {
-    &::before {
-      content: var(--tw-content);
-      background-color: var(--color-red-200);
     }
   }
   .before\:text-silence {
