@@ -9,11 +9,23 @@ interface TreeFolder {
   children?: TreeFolder[];
 }
 
+let openFolders: Set<string> = new Set();
 let clickTimeout: ReturnType<typeof setTimeout> | null = null;
+
+function saveOpenFolders() {
+  localStorage.setItem('openFolders', JSON.stringify([...openFolders]));
+}
+
+function loadOpenFolders(): Set<string> {
+  const saved = localStorage.getItem('openFolders');
+  return saved ? new Set(JSON.parse(saved)) : new Set();
+}
 
 function handleTreeClick(event: MouseEvent) {
   const target = event.target as HTMLElement;
-  const expandButton = target.closest('.folder-group > button');
+  const expandButton = target.closest(
+    '.folder-group > button',
+  ) as HTMLButtonElement;
 
   if (!expandButton) return;
 
@@ -30,11 +42,24 @@ function handleTreeClick(event: MouseEvent) {
       const chevronIcon = expandButton.querySelector(
         '.chevron',
       ) as HTMLImageElement;
+
+      const folderId = expandButton.dataset.folderId;
+
       if (childGroup.classList.contains('hidden')) {
         chevronIcon.src = '/assets/img/tree-closed.svg';
+
+        if (folderId) {
+          openFolders.delete(folderId);
+        }
       } else {
         chevronIcon.src = '/assets/img/tree-open.svg';
+
+        if (folderId) {
+          openFolders.add(folderId);
+        }
       }
+
+      saveOpenFolders();
     }
 
     clickTimeout = null;
@@ -63,6 +88,8 @@ function buildTree(
   structure: { folders: TreeFolder[]; files: TreeFile[] } | undefined,
 ) {
   if (!structure) return;
+
+  openFolders = loadOpenFolders();
 
   const treeBase = document.getElementById('tree-view') as HTMLElement;
   treeBase.innerHTML = '';
@@ -100,6 +127,16 @@ function buildTree(
 
     folderButton.dataset.folderId = folder.publicUrl;
     childrenGroupElement.classList.add(`pl-${currentIndentationLevel}`);
+
+    if (openFolders.has(folder.publicUrl)) {
+      childrenGroupElement.classList.remove('hidden');
+      const chevronIcon = folderButton.querySelector(
+        '.chevron',
+      ) as HTMLImageElement;
+      if (chevronIcon) {
+        chevronIcon.src = '/assets/img/tree-open.svg';
+      }
+    }
 
     if (folder.children && folder.children.length > 0) {
       folder.children.forEach((folderChild) => {
