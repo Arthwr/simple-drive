@@ -8,9 +8,17 @@ const getDashboardPage = asyncHandler<AuthenticatedRequest>(
     const userId = req.user.id;
     const publicFolderId = req.params.publicFolderId;
 
-    const folderContent = await userService.getDirectoryData(
+    let folderContent = await userService.getDirectoryData(
       userId,
       publicFolderId,
+    );
+
+    folderContent.folders = await Promise.all(
+      folderContent.folders.map(async (folder) => {
+        let folderSize = await userService.getFolderSize(folder.id);
+
+        return { folderSize, ...folder };
+      }),
     );
 
     res.render('pages/dashboard', { folderContent });

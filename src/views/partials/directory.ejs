@@ -28,7 +28,9 @@
                                                 <%= folder.name %>
                                             </span>
                                         </a>
-                                        <div class="text-gray-500">--</div>
+                                        <div class="text-gray-500">
+                                            <%= utils.formatFileSize(folder.folderSize) %>
+                                        </div>
                                         <div class="text-gray-500">
                                             <%= utils.formatDate(folder.updatedAt) %>
                                         </div>

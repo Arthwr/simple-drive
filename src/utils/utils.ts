@@ -24,4 +24,9 @@ function getFileIconUrl(fileName: string) {
   return '/assets/img/file-dir-icon.svg';
 }
 
-export default { capitalize, formatDate, formatFileSize, getFileIconUrl };
+export default {
+  capitalize,
+  formatDate,
+  formatFileSize,
+  getFileIconUrl,
+};

@@ -49,7 +49,6 @@ class UserRepository {
     return count === 0;
   }
 
-  // ---- Get root level folder id
   async findRootFolderId(repositoryId: string): Promise<string | null> {
     const rootFolder = await this.prisma.folder.findFirst({
       where: {
@@ -62,7 +61,6 @@ class UserRepository {
     return rootFolder?.id ?? null;
   }
 
-  // ---- Get parent folder
   async findParentFolderById(
     parentId: string,
   ): Promise<ParentFolderInfo | null> {
@@ -93,7 +91,6 @@ class UserRepository {
     });
   }
 
-  // ---- Get folder id by its public id
   async findFolderIdByPublicId(
     repositoryId: string,
     publicId: string,
@@ -113,7 +110,6 @@ class UserRepository {
     return folder?.id ?? null;
   }
 
-  // ---- Get root level folders and files of user repository
   async findRootFolderWithContents(
     repositoryId: string,
   ): Promise<(Folder & { children: Folder[]; files: File[] }) | null> {
@@ -129,7 +125,6 @@ class UserRepository {
     });
   }
 
-  // ---- Get specific folder and its direct children/files
   async findFolderWithContents(
     repositoryId: string,
     publicId: string,

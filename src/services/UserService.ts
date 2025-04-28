@@ -29,25 +29,6 @@ class UserService {
     return existingUser !== null;
   }
 
-  async getFolderAncestors(startFolder: Folder): Promise<ParentFolderInfo[]> {
-    const ancestors: ParentFolderInfo[] = [];
-    let currentParentId: string | null = startFolder.parentId;
-
-    while (currentParentId) {
-      const parentInfo =
-        await this.userRepo.findParentFolderById(currentParentId);
-
-      if (!parentInfo || !parentInfo.parentId) {
-        break;
-      }
-
-      ancestors.push(parentInfo);
-      currentParentId = parentInfo.parentId;
-    }
-
-    return ancestors.reverse();
-  }
-
   async traverseFolders(folderId: string): Promise<TreeFolder> {
     const folderContents = await this.userRepo.findFolderContentById(folderId);
 
@@ -71,6 +52,25 @@ class UserService {
       files: folderContents?.files.map((file) => ({ name: file.name })),
       children: children,
     };
+  }
+
+  async getFolderAncestors(startFolder: Folder): Promise<ParentFolderInfo[]> {
+    const ancestors: ParentFolderInfo[] = [];
+    let currentParentId: string | null = startFolder.parentId;
+
+    while (currentParentId) {
+      const parentInfo =
+        await this.userRepo.findParentFolderById(currentParentId);
+
+      if (!parentInfo || !parentInfo.parentId) {
+        break;
+      }
+
+      ancestors.push(parentInfo);
+      currentParentId = parentInfo.parentId;
+    }
+
+    return ancestors.reverse();
   }
 
   async getRootFolderTree(
@@ -125,6 +125,37 @@ class UserService {
     }
 
     return this.getRootFolderTree(rootFolder.id);
+  }
+
+  async getFolderSize(folderId: string): Promise<bigint> {
+    let size: bigint | null = BigInt(0);
+
+    const stack: string[] = [folderId];
+
+    while (stack.length > 0) {
+      const currentFolderId = stack.pop();
+      if (!currentFolderId) continue;
+
+      const folderContent =
+        await this.userRepo.findFolderContentById(currentFolderId);
+
+      if (!folderContent) continue;
+
+      if (folderContent.files && folderContent.files.length > 0) {
+        size += folderContent.files.reduce(
+          (acc, file) => acc + file.size,
+          BigInt(0),
+        );
+      }
+
+      if (folderContent.children && folderContent.children.length > 0) {
+        for (const child of folderContent.children) {
+          stack.push(child.id);
+        }
+      }
+    }
+
+    return size;
   }
 
   async getDirectoryData(
