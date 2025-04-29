@@ -1,7 +1,7 @@
 import capitalize from './utils/capitalize.js';
 
 interface FileMap {
-  index: string;
+  fileId: string;
   file: File;
 }
 
@@ -25,6 +25,7 @@ Object.entries(iconCache).forEach(([key, img]) => {
   img.src = `/assets/img/flash-icons/${key.toLowerCase()}-icon.svg`;
 });
 
+const dropFile = document.getElementById('dropfile') as HTMLElement;
 const fileInput = document.getElementById('ufile') as HTMLInputElement;
 const previewContainer = document.getElementById(
   'file-preview-container',
@@ -130,19 +131,60 @@ function showToastNotification(type: FlashTypes, message: string) {
   }
 }
 
+function renderAndStoreFiles(fileList: File[]) {
+  const fragment = document.createDocumentFragment();
+
+  fileList.forEach((file) => {
+    const isDuplicate = filesPayload.some(
+      (entry) => entry.file.name === file.name && entry.file.size === file.size,
+    );
+
+    if (isDuplicate) return;
+
+    const fileId = crypto.randomUUID();
+
+    const fileClone = fileItemTemplate.content.cloneNode(
+      true,
+    ) as DocumentFragment;
+
+    const fileItem = fileClone.querySelector('.file-item') as HTMLElement;
+    const fileName = fileClone.querySelector('.file-name') as HTMLElement;
+    const fileSize = fileClone.querySelector('.file-size') as HTMLElement;
+
+    if (fileItem) fileItem.dataset.fileIndex = fileId;
+    if (fileName) fileName.textContent = file.name;
+    if (fileSize) fileSize.textContent = formatFileSize(file.size);
+
+    fragment.appendChild(fileClone);
+    filesPayload.push({ fileId, file });
+  });
+
+  previewList.appendChild(fragment);
+  updatePreviewVisibility();
+}
+
 function handleFileRemovalClick(event: MouseEvent) {
   const removeButton = (event.target as HTMLElement).closest('button');
 
   if (!removeButton) return;
 
   const fileElement = removeButton.closest('.file-item') as HTMLElement;
-  const targetIndex = fileElement.dataset.fileIndex;
+  const targetId = fileElement.dataset.fileIndex;
 
-  if (targetIndex && fileElement) {
-    filesPayload = filesPayload.filter((file) => file.index !== targetIndex);
+  if (targetId && fileElement) {
+    filesPayload = filesPayload.filter((file) => file.fileId !== targetId);
     fileElement.remove();
     updatePreviewVisibility();
   }
+}
+
+function handleFileDropHandler(event: DragEvent) {
+  event.preventDefault();
+
+  if (!event.dataTransfer || !event.dataTransfer.files) return;
+
+  const files = Array.from(event.dataTransfer.files);
+  renderAndStoreFiles(files);
 }
 
 function handleFilesUpload() {
@@ -153,7 +195,7 @@ function handleFilesUpload() {
   const formData = new FormData();
   const folderId = folderInput.value;
 
-  filesPayload.forEach(({ index, file }) => {
+  filesPayload.forEach(({ file }) => {
     formData.append('ufile', file);
   });
 
@@ -202,43 +244,13 @@ function handleFilesUpload() {
 
 function handleFiles(this: HTMLInputElement) {
   const fileList: FileList | null = this.files;
+  if (!fileList || !previewList || fileList.length === 0) return;
 
-  previewList.innerHTML = '';
+  previewList.textContent = ``;
   filesPayload = [];
 
-  if (!fileList || fileList.length === 0 || !fileItemTemplate || !previewList) {
-    updatePreviewVisibility();
-    return;
-  }
-
-  const fragmentFilesList = document.createDocumentFragment();
-
-  Array.from(fileList).forEach((file, index) => {
-    const singleFileClone = fileItemTemplate.content.cloneNode(
-      true,
-    ) as DocumentFragment;
-
-    const fileItemElement = singleFileClone.querySelector(
-      '.file-item',
-    ) as HTMLElement;
-    const fileNameElement = singleFileClone.querySelector(
-      '.file-name',
-    ) as HTMLElement;
-    const fileSizeElement = singleFileClone.querySelector(
-      '.file-size',
-    ) as HTMLElement;
-
-    if (fileItemElement) fileItemElement.dataset.fileIndex = index.toString();
-    if (fileNameElement) fileNameElement.textContent = file.name;
-    if (fileSizeElement)
-      fileSizeElement.textContent = formatFileSize(file.size);
-
-    fragmentFilesList.appendChild(singleFileClone);
-    filesPayload.push({ index: index.toString(), file });
-  });
-
-  previewList.appendChild(fragmentFilesList);
-  updatePreviewVisibility();
+  const files = Array.from(fileList);
+  renderAndStoreFiles(files);
 }
 
 window.addEventListener('DOMContentLoaded', () => {
@@ -255,6 +267,8 @@ export default function setupFilesUpload() {
     return;
 
   fileInput.addEventListener('change', handleFiles);
+  dropFile.addEventListener('dragover', (e) => e.preventDefault());
+  dropFile.addEventListener('drop', handleFileDropHandler);
   previewList.addEventListener('click', handleFileRemovalClick);
   confirmButton.addEventListener('click', () => handleFilesUpload());
 }
