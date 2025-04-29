@@ -1,4 +1,5 @@
 import setupFilesUpload from './setupFilesUpload.js';
+import setupItemMenu from './setupItemMenu.js';
 import setupToast from './setupToast.js';
 import setupTree from './setupTree.js';
 import setupSignInValidators from './setupValidation.js';
@@ -8,4 +9,5 @@ document.addEventListener('DOMContentLoaded', () => {
   setupToast();
   setupFilesUpload();
   setupTree();
+  setupItemMenu();
 });
