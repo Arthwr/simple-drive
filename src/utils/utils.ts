@@ -1,5 +1,6 @@
 import path from 'node:path';
 
+import { DirectoryViewData } from '../types/directory.types';
 import formatFileSize from './formatFileSize';
 import getCategoryByExt from './getCategoryByExt';
 

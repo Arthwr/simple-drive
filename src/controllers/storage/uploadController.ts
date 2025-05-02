@@ -66,19 +66,21 @@ const postUploadFile = asyncHandler<AuthenticatedRequest>(
             name: fixMulterEncoding(file.originalname),
             size: file.size,
             url: fileUrl,
+            filePath,
           };
         }),
       );
 
       await Promise.all(
         results.map(async (result) => {
-          const { name, size, url } = result;
+          const { name, size, url, filePath } = result;
           await userService.addUserFile(
             userId,
             name,
             BigInt(size),
             url,
             publicFolderId,
+            filePath,
           );
         }),
       );

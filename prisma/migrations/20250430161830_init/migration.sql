@@ -90,6 +90,7 @@ CREATE TABLE "SharedFolder" (
 -- CreateTable
 CREATE TABLE "File" (
     "id" TEXT NOT NULL,
+    "publicId" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "size" BIGINT NOT NULL,
     "url" TEXT NOT NULL,
@@ -126,9 +127,6 @@ CREATE UNIQUE INDEX "SharedFolder_url_key" ON "SharedFolder"("url");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "File_url_key" ON "File"("url");
-
--- CreateIndex
-CREATE UNIQUE INDEX "File_folderId_name_key" ON "File"("folderId", "name");
 
 -- AddForeignKey
 ALTER TABLE "User" ADD CONSTRAINT "User_roleId_fkey" FOREIGN KEY ("roleId") REFERENCES "Role"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

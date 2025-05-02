@@ -1,4 +1,4 @@
-import { File, Folder } from '@prisma/client';
+import { File, Folder, Prisma } from '@prisma/client';
 import bcryptjs from 'bcryptjs';
 
 import prisma from '../config/prismaClient';
@@ -31,7 +31,6 @@ class UserService {
 
   async traverseFolders(folderId: string): Promise<TreeFolder> {
     const folderContents = await this.userRepo.findFolderContentById(folderId);
-
     if (!folderContents) {
       throw new NotifyError(`Couldn't find folder during tree render`, 500);
     }
@@ -77,7 +76,6 @@ class UserService {
     rootFolderId: string,
   ): Promise<{ folders: TreeFolder[]; files: TreeFile[] } | undefined> {
     const rootContent = await this.userRepo.findFolderContentById(rootFolderId);
-
     if (!rootContent) {
       throw new NotifyError('Root folder not found', 500);
     }
@@ -107,7 +105,6 @@ class UserService {
 
   async getUserFolderHierarchy(userId: string) {
     const storage = await this.userRepo.findStorageByUserId(userId);
-
     if (!storage) {
       throw new NotifyError('User storage not found', 500, '/dashboard');
     }
@@ -187,7 +184,7 @@ class UserService {
         );
       }
 
-      currentFolder = null;
+      currentFolder = implicitRoot;
       parentFolder = null;
       folders = implicitRoot.children;
       files = implicitRoot.files;
@@ -229,7 +226,6 @@ class UserService {
     folderName: string,
   ) {
     const storage = await this.userRepo.findStorageByUserId(userId);
-
     if (!storage) {
       throw new NotifyError('User storage not found', 404);
     }
@@ -285,9 +281,9 @@ class UserService {
     fileSize: bigint,
     fileUrl: string,
     folderPublicId: string | null,
+    storagePath: string,
   ) {
     const storage = await this.userRepo.findStorageByUserId(userId);
-
     if (!storage) {
       throw new NotifyError('User storage not found', 404);
     }
@@ -313,7 +309,81 @@ class UserService {
       implicitFolderId = folderId;
     }
 
-    return this.userRepo.addFile(fileName, fileSize, fileUrl, implicitFolderId);
+    return this.userRepo.addFile(
+      fileName,
+      fileSize,
+      fileUrl,
+      implicitFolderId,
+      storagePath,
+    );
+  }
+
+  // Delete methods
+  async deleteUserFolder(userId: string, folderPublicId: string) {
+    const storage = await this.userRepo.findStorageByUserId(userId);
+    if (!storage) {
+      throw new NotifyError('User storage not found', 404);
+    }
+
+    const folderId = await this.userRepo.findFolderIdByPublicId(
+      storage.id,
+      folderPublicId,
+    );
+    if (!folderId) {
+      throw new NotifyError(
+        'Failed to find requested folder in your storage',
+        500,
+      );
+    }
+
+    try {
+      return await this.userRepo.deleteFolder(folderId);
+    } catch (error) {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === 'P2025'
+      ) {
+        throw new NotifyError('Failed to delete requested folder', 500);
+      }
+
+      throw error;
+    }
+  }
+
+  async deleteUserFile(
+    userId: string,
+    filePublidId: string,
+    folderParentPublicId: string,
+  ) {
+    const storage = await this.userRepo.findStorageByUserId(userId);
+    if (!storage) {
+      throw new NotifyError('User storage not found', 404);
+    }
+
+    const folderId = await this.userRepo.findFolderIdByPublicId(
+      storage.id,
+      folderParentPublicId,
+    );
+
+    if (!folderId) {
+      throw new NotifyError(
+        'Failed to find requested folder in your storage',
+        500,
+      );
+    }
+
+    try {
+      return await this.userRepo.deleteFile(filePublidId, folderId);
+    } catch (error) {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === 'P2025'
+      ) {
+        throw new NotifyError('Failed to delete requested file', 500);
+      }
+
+      throw error;
+    }
   }
 }
 

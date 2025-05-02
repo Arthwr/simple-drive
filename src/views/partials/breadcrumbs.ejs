@@ -26,7 +26,7 @@
                             <% }) %>
                                 <% }%>
                                     <%# Current Folder %>
-                                        <% if (folderContent && folderContent.currentFolder) { %>
+                                        <% if (folderContent && folderContent.parentFolder) { %>
                                             <li class="text-black before:content-['/'] before:mx-2 before:text-silence max-w-[200px] truncate"
                                                 title="<%= folderContent.currentFolder.name %>">
                                                 <%= folderContent.currentFolder.name %>

@@ -191,6 +191,7 @@ class UserRepository {
     size: bigint,
     url: string,
     folderId: string,
+    storagePath: string,
   ): Promise<File> {
     return this.prisma.file.create({
       data: {
@@ -198,6 +199,27 @@ class UserRepository {
         size,
         url,
         folderId,
+        storagePath,
+      },
+    });
+  }
+
+  // Delete methods
+  async deleteFolder(folderId: string): Promise<Folder> {
+    return this.prisma.folder.delete({
+      where: {
+        id: folderId,
+      },
+    });
+  }
+
+  async deleteFile(publicId: string, folderId: string): Promise<File> {
+    return this.prisma.file.delete({
+      where: {
+        publicId_folderId: {
+          publicId,
+          folderId,
+        },
       },
     });
   }

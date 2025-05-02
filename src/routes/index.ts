@@ -6,6 +6,7 @@ import loginRoutes from './auth/loginRoutes';
 import registerRoutes from './auth/registerRoutes';
 import dashboardRoutes from './dashboard/dashboardRoutes';
 import indexRoutes from './index/indexRoutes';
+import deleteRouter from './storage/deleteRoutes';
 import folderRoutes from './storage/folderRoutes';
 import uploadRoutes from './storage/uploadRoutes';
 
@@ -22,6 +23,7 @@ routes.use('/dashboard', isAuthenticated, dashboardRoutes);
 // ---- Folder and files manipulation
 routes.use('/folder', isAuthenticated, folderRoutes);
 routes.use('/upload', isAuthenticated, uploadRoutes);
+routes.use('/delete', isAuthenticated, deleteRouter);
 
 // API for different stuff (tree structure and etc)
 routes.use('/api', isAuthenticated, apiRouter);

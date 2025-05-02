@@ -110,12 +110,16 @@ model SharedFolder {
 }
 
 model File {
-  id        String   @id @default(uuid())
-  name      String
-  size      BigInt
-  url       String   @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  folderId  String
-  folder    Folder   @relation(fields: [folderId], references: [id], onDelete: Cascade)
+  id          String   @id @default(uuid())
+  publicId    String   @default(nanoid())
+  name        String
+  size        BigInt
+  url         String   @unique
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  folderId    String
+  folder      Folder   @relation(fields: [folderId], references: [id], onDelete: Cascade)
+  storagePath String  @unique
+
+  @@unique([publicId, folderId])
 }

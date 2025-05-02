@@ -2,7 +2,17 @@ import config from '.';
 import formatFileSize from '../utils/formatFileSize';
 
 export const FileExtTypes: Record<string, string[]> = {
-  doc: ['.doc', '.docx', '.odt', '.rtf', '.txt', '.tex', '.wpd', '.pages', '.md'],
+  doc: [
+    '.doc',
+    '.docx',
+    '.odt',
+    '.rtf',
+    '.txt',
+    '.tex',
+    '.wpd',
+    '.pages',
+    '.md',
+  ],
   pdf: ['.pdf'],
   mus: ['.mp3', '.wav', '.flac', '.aac', '.ogg', '.wma', '.alac', '.m4a'],
   image: [
@@ -41,5 +51,8 @@ export const FlashMessages = {
     FILES_SUCCESS: 'Files uploaded successfuly!',
     FAILED_URL: 'Failed to construct file url',
     FAILED_UPLOAD: 'Upload failed, rolled back all uploaded files',
+    FOLDER_DELETE_SUCCESS: 'Successfully deleted folder and all its contents',
+    FOLDER_DELETE_FAILED:
+      'Deletion failed. The folder and files remain unchanged.',
   },
 };
