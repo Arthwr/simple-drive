@@ -3,7 +3,7 @@ import passport from 'passport';
 import { Strategy as LocalStrategy } from 'passport-local';
 
 import config from '.';
-import userService from '../services/UserService';
+import userServiceInstance from '../services/UserService';
 import { FlashMessages, FlashTypes } from './constants';
 
 const configurePassport = () => {
@@ -16,7 +16,7 @@ const configurePassport = () => {
       },
       async (req, email, password, done) => {
         try {
-          const user = await userService.findUserByEmail(email);
+          const user = await userServiceInstance.findUserByEmail(email);
           const hash = user ? user.password : config.dummyHash;
 
           const match = await bcryptjs.compare(password, hash);
@@ -41,7 +41,7 @@ const configurePassport = () => {
 
   passport.deserializeUser(async (id: string, done) => {
     try {
-      const user = await userService.findUserById(id);
+      const user = await userServiceInstance.findUserById(id);
 
       if (!user) {
         return done(null, false);

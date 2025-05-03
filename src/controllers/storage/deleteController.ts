@@ -2,7 +2,7 @@ import { AuthenticatedRequest } from 'express';
 
 import { FlashMessages, FlashTypes } from '../../config/constants';
 import { NotifyError } from '../../errors/NotifyError';
-import userService from '../../services/UserService';
+import userServiceInstance from '../../services/UserService';
 import asyncHandler from '../../utils/asyncHandler';
 
 const postDeleteFolder = asyncHandler<AuthenticatedRequest>(
@@ -11,8 +11,12 @@ const postDeleteFolder = asyncHandler<AuthenticatedRequest>(
     const publicFolderId = req.params.folderId;
 
     try {
-      // supabase delete files cascade
-      await userService.deleteUserFolder(userId, publicFolderId);
+      const storagePaths = await userServiceInstance.getFileDescendantsStoragePaths(
+        userId,
+        publicFolderId,
+      );
+
+      await userServiceInstance.deleteUserFolder(userId, publicFolderId);
 
       res.status(200).json({
         type: FlashTypes.SUCCESS,

@@ -110,6 +110,37 @@ class UserRepository {
     return folder?.id ?? null;
   }
 
+  async findFolderChildrenAndFilePaths(
+    folderId: string,
+  ): Promise<{ childrenIds: string[]; filePaths: string[] }> {
+    const folder = await this.prisma.folder.findUnique({
+      where: {
+        id: folderId,
+      },
+      select: {
+        children: {
+          select: { id: true },
+        },
+        files: {
+          select: {
+            storagePath: true,
+          },
+        },
+      },
+    });
+
+    if (!folder) {
+      return { childrenIds: [], filePaths: [] };
+    }
+
+    const paths = folder.files.map((f) => f.storagePath).filter((p) => p);
+
+    return {
+      childrenIds: folder.children.map((c) => c.id),
+      filePaths: paths,
+    };
+  }
+
   async findRootFolderWithContents(
     repositoryId: string,
   ): Promise<(Folder & { children: Folder[]; files: File[] }) | null> {
@@ -201,6 +232,20 @@ class UserRepository {
         folderId,
         storagePath,
       },
+    });
+  }
+
+  async addManyFiles(
+    storagePath: {
+      name: string;
+      size: bigint;
+      url: string;
+      storagePath: string;
+      folderId: string;
+    }[] = [],
+  ) {
+    return this.prisma.file.createMany({
+      data: storagePath,
     });
   }
 

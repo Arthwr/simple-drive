@@ -1,6 +1,6 @@
 import { FlashMessages, FlashTypes } from '../config/constants';
 import { UnexpectedError } from '../errors/NotifyError';
-import userService from '../services/UserService';
+import userServiceInstance from '../services/UserService';
 import asyncHandler from '../utils/asyncHandler';
 
 interface RegisterUserBody {
@@ -14,7 +14,7 @@ const getRegisterPage = asyncHandler(async (req, res) => {
 
 const postRegisterUser = asyncHandler(async (req, res) => {
   const { email, password }: RegisterUserBody = req.body;
-  const newUser = await userService.addUserMember(email, password);
+  const newUser = await userServiceInstance.addUserMember(email, password);
 
   if (!newUser) {
     throw new UnexpectedError();

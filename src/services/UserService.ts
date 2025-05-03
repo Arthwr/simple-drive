@@ -1,19 +1,22 @@
 import { File, Folder, Prisma } from '@prisma/client';
 import bcryptjs from 'bcryptjs';
 
+import { FlashMessages } from '../config/constants';
 import prisma from '../config/prismaClient';
+import supabase from '../config/supabaseClient';
 import { UserExistsError } from '../errors/NotifyError';
 import { NotifyError } from '../errors/NotifyError';
 import UserRepository from '../repository/UserRepository';
 import { ParentFolderInfo } from '../types/directory.types';
 import { DirectoryViewData } from '../types/directory.types';
+import fixMulterEncoding from '../utils/fixMulterEncoding';
+import StorageService from './StorageService';
 
 class UserService {
-  private userRepo: UserRepository;
-
-  constructor(userRepo: UserRepository) {
-    this.userRepo = userRepo;
-  }
+  constructor(
+    private userRepo: UserRepository,
+    private storageService: StorageService,
+  ) {}
 
   // Read methods
   async findUserByEmail(userEmail: string) {
@@ -51,6 +54,52 @@ class UserService {
       files: folderContents?.files.map((file) => ({ name: file.name })),
       children: children,
     };
+  }
+
+  async getFileDescendantsStoragePaths(userId: string, publicFolderId: string) {
+    const allStoragePaths: string[] = [];
+
+    const storage = await this.userRepo.findStorageByUserId(userId);
+    if (!storage) {
+      throw new NotifyError('User storage not found', 500, '/dashboard');
+    }
+
+    const startFolderId = await this.userRepo.findFolderIdByPublicId(
+      storage.id,
+      publicFolderId,
+    );
+    if (!startFolderId) {
+      throw new NotifyError(
+        'Failed to find requested folder in your storage',
+        500,
+      );
+    }
+
+    const stack: string[] = [startFolderId];
+    const processedFolders = new Set<string>();
+
+    while (stack.length > 0) {
+      const currentFolderId = stack.pop();
+
+      if (!currentFolderId || processedFolders.has(currentFolderId)) {
+        continue;
+      }
+
+      processedFolders.add(currentFolderId);
+
+      const { childrenIds, filePaths } =
+        await this.userRepo.findFolderChildrenAndFilePaths(currentFolderId);
+
+      if (filePaths.length > 0) {
+        allStoragePaths.push(...filePaths);
+      }
+
+      if (childrenIds.length > 0) {
+        stack.push(...childrenIds);
+      }
+    }
+
+    return allStoragePaths;
   }
 
   async getFolderAncestors(startFolder: Folder): Promise<ParentFolderInfo[]> {
@@ -288,7 +337,7 @@ class UserService {
       throw new NotifyError('User storage not found', 404);
     }
 
-    let implicitFolderId: string;
+    let primaryFolderId: string;
 
     if (!folderPublicId) {
       const rootFolderId = await this.userRepo.findRootFolderId(storage.id);
@@ -296,7 +345,7 @@ class UserService {
         throw new NotifyError('Cannot find directory to create file in', 500);
       }
 
-      implicitFolderId = rootFolderId;
+      primaryFolderId = rootFolderId;
     } else {
       const folderId = await this.userRepo.findFolderIdByPublicId(
         storage.id,
@@ -306,14 +355,14 @@ class UserService {
         throw new NotifyError('Cannot find directory to create file in', 500);
       }
 
-      implicitFolderId = folderId;
+      primaryFolderId = folderId;
     }
 
     return this.userRepo.addFile(
       fileName,
       fileSize,
       fileUrl,
-      implicitFolderId,
+      primaryFolderId,
       storagePath,
     );
   }
@@ -385,9 +434,106 @@ class UserService {
       throw error;
     }
   }
+
+  // Orchestrate methods
+  async uploadAndRegisterFiles(
+    userId: string,
+    parentPublicFolderId: string | null,
+    files: Express.Multer.File[],
+  ) {
+    if (!files || files.length === 0) {
+      throw new NotifyError(FlashMessages.FILE_NOT_PROVIDED, 400);
+    }
+
+    const storage = await this.userRepo.findStorageByUserId(userId);
+    if (!storage) throw new NotifyError('User storage not found', 404);
+
+    let targetFolderId: string | null = null;
+    if (parentPublicFolderId) {
+      targetFolderId = await this.userRepo.findFolderIdByPublicId(
+        storage.id,
+        parentPublicFolderId,
+      );
+    } else {
+      targetFolderId = await this.userRepo.findRootFolderId(storage.id);
+    }
+
+    if (!targetFolderId) {
+      throw new NotifyError('Target folder not found.', 404);
+    }
+
+    const results: {
+      success: boolean;
+      message?: string;
+      storagePath?: string;
+    }[] = [];
+    const pathsToRegister: {
+      name: string;
+      size: bigint;
+      url: string;
+      storagePath: string;
+      folderId: string;
+    }[] = [];
+    const pathsToCleanOnError: string[] = [];
+
+    // Upload and register loop
+    for (const file of files) {
+      let storagePath: string | undefined = undefined;
+      let fixedName = fixMulterEncoding(file.originalname);
+
+      try {
+        // Upload to supabase
+        storagePath = await this.storageService.uploadFile(file, userId);
+        pathsToCleanOnError.push(storagePath);
+
+        // Get supabase file downloadable url
+        const fileUrl = await this.storageService.getFilePublicUrl(storagePath);
+
+        // Prepare metadata for DB
+        pathsToRegister.push({
+          name: fixedName,
+          size: BigInt(file.size),
+          url: fileUrl,
+          storagePath: storagePath,
+          folderId: targetFolderId,
+        });
+        results.push({ success: true, storagePath });
+      } catch (error: any) {
+        console.error(`Failed to process file ${file.originalname}`, error);
+        results.push({
+          success: false,
+          message: error.message || 'Upload/Processing Failed',
+          storagePath,
+        });
+      }
+    }
+
+    if (pathsToRegister.length > 0) {
+      try {
+        await this.userRepo.addManyFiles(pathsToRegister);
+      } catch (error) {
+        console.error('Database error saving file metadata:', error);
+        // Attempt to cleanup failed files at StorageService
+        await this.storageService.deleteFiles(pathsToCleanOnError);
+        throw new NotifyError(
+          'Failed to save some files after upload. Files were rolled back',
+          500,
+        );
+      }
+    }
+
+    const successfulCount = results.filter((r) => r.success).length;
+    const failedCount = files.length - successfulCount;
+    const errors = results
+      .filter((r) => !r.success)
+      .map((r) => r.message || 'Unknown error');
+
+    return { successfulCount, failedCount, errors };
+  }
 }
 
 const userRepository = new UserRepository(prisma);
-const userService = new UserService(userRepository);
+const storageService = new StorageService(supabase);
 
-export default userService;
+const userServiceInstance = new UserService(userRepository, storageService);
+export default userServiceInstance;

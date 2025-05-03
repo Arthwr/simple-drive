@@ -1,98 +1,44 @@
 import { AuthenticatedRequest } from 'express';
-import path from 'node:path';
-import { v4 as uuidv4 } from 'uuid';
 
-import config from '../../config';
 import { FlashMessages, FlashTypes } from '../../config/constants';
-import supabase from '../../config/supabaseClient';
 import { NotifyError } from '../../errors/NotifyError';
-import userService from '../../services/UserService';
+import userServiceInstance from '../../services/UserService';
 import asyncHandler from '../../utils/asyncHandler';
-import fixMulterEncoding from '../../utils/fixMulterEncoding';
-
-async function uploadFile(file: Express.Multer.File, userId: string) {
-  const fileExt = path.extname(file.originalname);
-  const filePath = `users/${userId}/${uuidv4()}.${fileExt}`;
-
-  const { data, error } = await supabase.storage
-    .from(config.supabase_bucket)
-    .upload(filePath, file.buffer, {
-      contentType: file.mimetype,
-      upsert: false,
-    });
-
-  if (error) {
-    throw new NotifyError(
-      `Failed to upload file: ${fixMulterEncoding(file.originalname)}. Please try again.`,
-      500,
-    );
-  }
-
-  return data.path;
-}
-
-async function buildFileUrl(uploadedPath: string) {
-  const { data } = supabase.storage
-    .from(config.supabase_bucket)
-    .getPublicUrl(uploadedPath, { download: true });
-
-  if (!data) {
-    throw new NotifyError(FlashMessages.STORAGE.FAILED_URL, 500);
-  }
-
-  return data.publicUrl;
-}
 
 const postUploadFile = asyncHandler<AuthenticatedRequest>(
   async (req, res, next) => {
-    const files = req.files as Express.Multer.File[];
+    const userId = req.user.id;
+    const publicFolderId = req.params.folderId || null;
+    const files = req.files as Express.Multer.File[] | undefined;
 
     if (!files || files.length === 0) {
       throw new NotifyError(FlashMessages.FILE_NOT_PROVIDED, 400);
     }
 
-    const uploadedPaths: string[] = [];
-    const publicFolderId = req.params.folderId || null;
-    const userId = req.user.id;
-
-    try {
-      const results = await Promise.all(
-        files.map(async (file) => {
-          const filePath = await uploadFile(file, userId);
-          uploadedPaths.push(filePath);
-
-          const fileUrl = await buildFileUrl(filePath);
-          return {
-            name: fixMulterEncoding(file.originalname),
-            size: file.size,
-            url: fileUrl,
-            filePath,
-          };
-        }),
+    const { successfulCount, failedCount, errors } =
+      await userServiceInstance.uploadAndRegisterFiles(
+        userId,
+        publicFolderId,
+        files,
       );
 
-      await Promise.all(
-        results.map(async (result) => {
-          const { name, size, url, filePath } = result;
-          await userService.addUserFile(
-            userId,
-            name,
-            BigInt(size),
-            url,
-            publicFolderId,
-            filePath,
-          );
-        }),
-      );
-
+    // Successful or partially successful uploads
+    if (failedCount === 0) {
       res.status(200).json({
         type: FlashTypes.SUCCESS,
-        message: FlashMessages.STORAGE.FILES_SUCCESS,
+        message: `${successfulCount} file(s) uploaded successfully.`,
       });
-    } catch (error) {
-      // Remove orphan files in case of any network error
-      await supabase.storage.from(config.supabase_bucket).remove(uploadedPaths);
-      return next(new NotifyError(FlashMessages.STORAGE.FAILED_UPLOAD, 500));
+    } else if (successfulCount > 0) {
+      const message = `Uploaded ${successfulCount} files successfully, but ${failedCount} failed.`;
+
+      res.status(207).json({
+        type: FlashTypes.WARNING,
+        message: message,
+        errors,
+      });
+    } else {
+      console.error(errors);
+      throw new NotifyError(FlashMessages.STORAGE.FAILED_UPLOAD, 500);
     }
   },
 );

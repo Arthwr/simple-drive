@@ -1,12 +1,12 @@
 import { AuthenticatedRequest } from 'express';
 
 import { NotifyError } from '../../errors/NotifyError';
-import userService from '../../services/UserService';
+import userServiceInstance from '../../services/UserService';
 import asyncHandler from '../../utils/asyncHandler';
 
 const getUserFoldersTree = asyncHandler<AuthenticatedRequest>(
   async (req, res, next) => {
-    const treeStructure = await userService.getUserFolderHierarchy(req.user.id);
+    const treeStructure = await userServiceInstance.getUserFolderHierarchy(req.user.id);
 
     if (!treeStructure) {
       throw new NotifyError("Couldn't retrieve user folder structure", 500);

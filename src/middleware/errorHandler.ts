@@ -8,7 +8,7 @@ const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
   const expectsJson = req.accepts('json', 'html') === 'json';
 
   if (err instanceof NotifyError) {
-    // If app errors come from client fetch post requests (file limit and etc)
+    // Errors that come from client fetch post requests (file limit and etc)
     if (expectsJson) {
       res.status(err.status).json({ message: err.message, type: 'error' });
       return;

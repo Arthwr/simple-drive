@@ -1,6 +1,6 @@
 import { AuthenticatedRequest } from 'express';
 
-import userService from '../../services/UserService';
+import userServiceInstance from '../../services/UserService';
 import asyncHandler from '../../utils/asyncHandler';
 
 const getDashboardPage = asyncHandler<AuthenticatedRequest>(
@@ -8,14 +8,14 @@ const getDashboardPage = asyncHandler<AuthenticatedRequest>(
     const userId = req.user.id;
     const publicFolderId = req.params.publicFolderId;
 
-    let folderContent = await userService.getDirectoryData(
+    let folderContent = await userServiceInstance.getDirectoryData(
       userId,
       publicFolderId,
     );
 
     folderContent.folders = await Promise.all(
       folderContent.folders.map(async (folder) => {
-        let folderSize = await userService.getFolderSize(folder.id);
+        let folderSize = await userServiceInstance.getFolderSize(folder.id);
 
         return { folderSize, ...folder };
       }),

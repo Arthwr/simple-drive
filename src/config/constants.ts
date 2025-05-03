@@ -48,7 +48,6 @@ export const FlashMessages = {
   FILE_NOT_PROVIDED: `Please attach the files before uploading`,
   STORAGE: {
     FOLDER_SUCCES: 'New folder created!',
-    FILES_SUCCESS: 'Files uploaded successfuly!',
     FAILED_URL: 'Failed to construct file url',
     FAILED_UPLOAD: 'Upload failed, rolled back all uploaded files',
     FOLDER_DELETE_SUCCESS: 'Successfully deleted folder and all its contents',
