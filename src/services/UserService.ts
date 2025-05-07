@@ -368,7 +368,7 @@ class UserService {
   }
 
   // Delete methods
-  async deleteUserFolder(userId: string, folderPublicId: string) {
+  async deleteUserFolderFromDB(userId: string, folderPublicId: string) {
     const storage = await this.userRepo.findStorageByUserId(userId);
     if (!storage) {
       throw new NotifyError('User storage not found', 404);
@@ -399,7 +399,7 @@ class UserService {
     }
   }
 
-  async deleteUserFile(
+  async deleteUserFileFromDB(
     userId: string,
     filePublidId: string,
     folderParentPublicId: string,
@@ -529,6 +529,19 @@ class UserService {
       .map((r) => r.message || 'Unknown error');
 
     return { successfulCount, failedCount, errors };
+  }
+
+  async deleteUserFolder(
+    userId: string,
+    folderPublicId: string,
+  ): Promise<void> {
+    const pathsToDelete = await this.getFileDescendantsStoragePaths(
+      userId,
+      folderPublicId,
+    );
+
+    await this.storageService.deleteFiles(pathsToDelete);
+    await this.deleteUserFolderFromDB(userId, folderPublicId);
   }
 }
 

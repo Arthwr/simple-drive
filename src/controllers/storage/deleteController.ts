@@ -11,11 +11,6 @@ const postDeleteFolder = asyncHandler<AuthenticatedRequest>(
     const publicFolderId = req.params.folderId;
 
     try {
-      const storagePaths = await userServiceInstance.getFileDescendantsStoragePaths(
-        userId,
-        publicFolderId,
-      );
-
       await userServiceInstance.deleteUserFolder(userId, publicFolderId);
 
       res.status(200).json({

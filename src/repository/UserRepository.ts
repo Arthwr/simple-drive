@@ -10,7 +10,7 @@ import {
 import { ParentFolderInfo } from '../types/directory.types';
 
 class UserRepository {
-  private prisma: PrismaClient;
+  public prisma: PrismaClient;
 
   constructor(prisma: PrismaClient) {
     this.prisma = prisma;
@@ -236,7 +236,7 @@ class UserRepository {
   }
 
   async addManyFiles(
-    storagePath: {
+    files: {
       name: string;
       size: bigint;
       url: string;
@@ -245,7 +245,7 @@ class UserRepository {
     }[] = [],
   ) {
     return this.prisma.file.createMany({
-      data: storagePath,
+      data: files,
     });
   }
 

@@ -4,7 +4,7 @@ import deleteController from '../../controllers/storage/deleteController';
 
 const deleteRouter = Router();
 
-deleteRouter.post('/folder', deleteController.postDeleteFolder);
-deleteRouter.post('/file', deleteController.postDeleteFile);
+deleteRouter.post('/folder/:folderId', deleteController.postDeleteFolder);
+deleteRouter.post('/file/:fileId', deleteController.postDeleteFile);
 
 export default deleteRouter;

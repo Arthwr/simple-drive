@@ -1,3 +1,4 @@
+import setupFileDeletion from './setupFileDeletion.js';
 import setupFilesUpload from './setupFilesUpload.js';
 import setupToast from './setupToast.js';
 import setupTree from './setupTree.js';
@@ -8,4 +9,5 @@ document.addEventListener('DOMContentLoaded', () => {
   setupToast();
   setupFilesUpload();
   setupTree();
+  setupFileDeletion();
 });

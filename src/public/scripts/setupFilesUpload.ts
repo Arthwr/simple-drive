@@ -1,45 +1,24 @@
-import capitalize from './utils/capitalize.js';
+import { showToastNotification } from './toast.js';
 
 interface FileMap {
   fileId: string;
   file: File;
 }
 
-enum FlashTypes {
-  ERROR = 'error',
-  SUCCESS = 'success',
-  WARNING = 'warning',
-  INFO = 'info',
-}
-
 let filesPayload: FileMap[] = [];
-
-const iconCache: Record<FlashTypes, HTMLImageElement> = {
-  [FlashTypes.SUCCESS]: new Image(),
-  [FlashTypes.ERROR]: new Image(),
-  [FlashTypes.INFO]: new Image(),
-  [FlashTypes.WARNING]: new Image(),
-};
-
-Object.entries(iconCache).forEach(([key, img]) => {
-  img.src = `/assets/img/flash-icons/${key.toLowerCase()}-icon.svg`;
-});
 
 const dropFile = document.getElementById('dropfile') as HTMLElement;
 const fileInput = document.getElementById('ufile') as HTMLInputElement;
 const previewContainer = document.getElementById(
   'file-preview-container',
 ) as HTMLElement;
-const confirmButton = previewContainer.querySelector('button');
+const confirmButton = previewContainer.querySelector(
+  'button',
+) as HTMLButtonElement;
 
 const previewList = document.getElementById('file-preview-list') as HTMLElement;
 const fileItemTemplate = document.getElementById(
   'file-item-template',
-) as HTMLTemplateElement;
-
-const serverToast = document.getElementById('toast') as HTMLElement;
-const toastMessageTemplate = document.getElementById(
-  'toast-template',
 ) as HTMLTemplateElement;
 
 const folderInput = document.getElementById('folder-id') as HTMLInputElement;
@@ -69,65 +48,6 @@ function updatePreviewVisibility() {
     previewContainer.classList.remove('hidden');
   } else {
     previewContainer.classList.add('hidden');
-  }
-}
-
-function showToastNotification(type: FlashTypes, message: string) {
-  if (serverToast) {
-    const serverToastShown = !serverToast.classList.contains('invisible');
-    if (serverToastShown) return;
-  }
-
-  if (!toastMessageTemplate) return;
-
-  const clientToastShown = document.querySelector('.toast-client');
-  if (clientToastShown) return;
-
-  const toastClone = toastMessageTemplate.content.cloneNode(
-    true,
-  ) as DocumentFragment;
-
-  const toastElement = toastClone.querySelector('.toast-client') as HTMLElement;
-  const toastTypeElement = toastClone.querySelector(
-    '.toast-type',
-  ) as HTMLElement;
-  const toastIcon = toastClone.querySelector('.toast-icon') as HTMLElement;
-  const toastIconImg = toastClone.querySelector('img') as HTMLImageElement;
-  const toastMessage = toastClone.querySelector('.toast-msg') as HTMLElement;
-  const progressBar = toastClone.querySelector(
-    '.toast-client > .t-progress',
-  ) as HTMLElement;
-
-  toastTypeElement.textContent = capitalize(type);
-  toastTypeElement.classList.add(`text-flash-${type}`);
-
-  toastIconImg.src = iconCache[type].src;
-  toastIconImg.alt = `${type} message`;
-  toastIcon.classList.add(`bg-flash-${type}`);
-
-  toastMessage.textContent = message;
-
-  document.body.appendChild(toastClone);
-
-  if (toastElement && progressBar) {
-    progressBar.addEventListener(
-      'animationend',
-      () => {
-        toastElement.remove();
-      },
-      { once: true },
-    );
-  }
-
-  const closeButton = toastElement.querySelector('button');
-  if (closeButton) {
-    closeButton.addEventListener(
-      'click',
-      () => {
-        toastElement.remove();
-      },
-      { once: true },
-    );
   }
 }
 
@@ -199,8 +119,12 @@ function handleFilesUpload() {
     formData.append('ufile', file);
   });
 
-  const buttonSpinner = previewContainer.querySelector('.confirm-spinner');
-  buttonSpinner?.classList.remove('hidden');
+  const buttonSpinner = previewContainer.querySelector(
+    '.confirm-spinner',
+  ) as HTMLElement;
+  buttonSpinner.classList.remove('hidden');
+
+  confirmButton.disabled = true;
 
   fetch(`/upload/${folderId}`, {
     method: 'POST',
@@ -230,7 +154,7 @@ function handleFilesUpload() {
       const message = data.message;
 
       if (type && message) {
-        localStorage.setItem('upload-toast', JSON.stringify({ type, message }));
+        localStorage.setItem('toast', JSON.stringify({ type, message }));
         location.reload();
       }
     })
@@ -254,11 +178,11 @@ function handleFiles(this: HTMLInputElement) {
 }
 
 window.addEventListener('DOMContentLoaded', () => {
-  const toastData = localStorage.getItem('upload-toast');
+  const toastData = localStorage.getItem('toast');
   if (toastData) {
     const { type, message } = JSON.parse(toastData);
     showToastNotification(type, message);
-    localStorage.removeItem('upload-toast');
+    localStorage.removeItem('toast');
   }
 });
 
