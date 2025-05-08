@@ -1096,24 +1096,9 @@
       cursor: not-allowed;
     }
   }
-  .disabled\:bg-gray-200 {
-    &:disabled {
-      background-color: var(--color-gray-200);
-    }
-  }
-  .disabled\:bg-gray-300 {
-    &:disabled {
-      background-color: var(--color-gray-300);
-    }
-  }
   .disabled\:bg-gray-400 {
     &:disabled {
       background-color: var(--color-gray-400);
-    }
-  }
-  .disabled\:text-gray-500 {
-    &:disabled {
-      color: var(--color-gray-500);
     }
   }
   .disabled\:opacity-50 {

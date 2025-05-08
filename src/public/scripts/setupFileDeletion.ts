@@ -2,53 +2,94 @@ import { showToastNotification } from './toast.js';
 
 const directoryElement = document.getElementById('directory') as HTMLElement;
 
-async function postFolderDelRequest(folderId: string) {
+async function makeDelRequest(url: string, method: string = 'POST') {
   try {
-    const response = await fetch(`/delete/folder/${folderId}`, {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-      },
+    const response = await fetch(url, {
+      method: method,
+      headers: { Accept: 'application/json' },
     });
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      let errorMessage = `${response.status} ${response.statusText}`;
+    const responseData = await response.json().catch(() => ({}));
 
-      if (errorData.type && errorData.message) {
-        errorMessage = errorData.message;
-        showToastNotification(errorData.type, errorData.message);
-      }
+    if (!response.ok) {
+      const errorMessage = responseData?.message || `${response.status} ${response.statusText}`;
+
+      const errorType = responseData?.type || 'ERROR';
+      showToastNotification(errorType, errorMessage);
 
       throw new Error(errorMessage);
     }
 
-    const data = await response.json();
-    const { type, message } = data;
-
-    if (type && message) {
-      localStorage.setItem('toast', JSON.stringify({ type, message }));
-      location.reload();
-    }
+    return responseData;
   } catch (error) {
-    console.error('Delete error: ', error);
+    console.error(`API delete request to ${url} failed: `, error);
+    throw error;
   }
 }
 
-async function handleFolderDeleteClick(event: MouseEvent) {
-  const targetDelButton = (event.target as HTMLElement).closest(
-    'button.del-folder',
-  ) as HTMLButtonElement;
-  const folderId = (targetDelButton as HTMLButtonElement).dataset.id;
+async function handleDirectoryDelButtonClick(event: MouseEvent) {
+  const target = event.target as HTMLElement;
 
-  if (targetDelButton && folderId) {
-    targetDelButton.disabled = true;
-    await postFolderDelRequest(folderId);
+  const deleteFolderButton = target.closest('button.del-folder');
+
+  if (deleteFolderButton instanceof HTMLButtonElement) {
+    const folderId = deleteFolderButton.dataset.id;
+    if (folderId) {
+      const spinner = deleteFolderButton.querySelector('.wait-spinner');
+
+      spinner?.classList.remove('hidden');
+      deleteFolderButton.disabled = true;
+
+      try {
+        const data = await makeDelRequest(`/delete/folder/${folderId}`, 'POST');
+
+        if (data?.type && data?.message) {
+          localStorage.setItem('toast', JSON.stringify({ type: data.type, message: data.message }));
+          location.reload();
+        } else {
+          location.reload();
+        }
+      } catch (error) {
+        spinner?.classList.add('hidden');
+        deleteFolderButton.disabled = false;
+      }
+
+      return;
+    }
+  }
+
+  const deleteFileButton = target.closest('button.del-file');
+  if (deleteFileButton instanceof HTMLButtonElement) {
+    const fileId = deleteFileButton.dataset.id;
+    const parentFolderId = deleteFileButton.dataset.parent;
+
+    if (fileId && parentFolderId) {
+      const spinner = deleteFileButton.querySelector('.wait-spinner');
+
+      spinner?.classList.remove('hidden');
+      deleteFileButton.disabled = true;
+
+      try {
+        const data = await makeDelRequest(`/delete/file/${parentFolderId}/${fileId}`, 'POST');
+
+        if (data?.type && data?.message) {
+          localStorage.setItem('toast', JSON.stringify({ type: data.type, message: data.message }));
+          location.reload();
+        } else {
+          location.reload();
+        }
+      } catch (error) {
+        spinner?.classList.add('hidden');
+        deleteFileButton.disabled = false;
+      }
+
+      return;
+    }
   }
 }
 
 export default function setupFileDeletion() {
   if (!directoryElement) return;
 
-  directoryElement.addEventListener('click', handleFolderDeleteClick);
+  directoryElement.addEventListener('click', handleDirectoryDelButtonClick);
 }

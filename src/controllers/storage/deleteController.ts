@@ -27,7 +27,26 @@ const postDeleteFolder = asyncHandler<AuthenticatedRequest>(
 
 const postDeleteFile = asyncHandler<AuthenticatedRequest>(
   async (req, res, next) => {
-    // post request req.body:
+    const userId = req.user.id;
+    const publicFolderId = req.params.parentFolderId;
+    const publicFileId = req.params.fileId;
+
+    try {
+      await userServiceInstance.deleteUserFile(
+        userId,
+        publicFolderId,
+        publicFileId,
+      );
+
+      res.status(200).json({
+        type: FlashTypes.SUCCESS,
+        message: FlashMessages.STORAGE.FILE_DELETE_SUCCESS,
+      });
+    } catch (error) {
+      return next(
+        new NotifyError(FlashMessages.STORAGE.FILE_DELETE_FAILED, 500),
+      );
+    }
   },
 );
 

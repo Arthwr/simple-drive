@@ -52,6 +52,8 @@ export const FlashMessages = {
     FAILED_UPLOAD: 'Upload failed, rolled back all uploaded files',
     FOLDER_DELETE_SUCCESS: 'Successfully deleted folder and all its contents',
     FOLDER_DELETE_FAILED:
-      'Deletion failed. The folder and files remain unchanged.',
+      'Deletion failed. The folder and files remain unchanged',
+    FILE_DELETE_SUCCESS: 'Successfully deleted requested file',
+    FILE_DELETE_FAILED: 'Deletion failed. File(s) remain unchanged',
   },
 };

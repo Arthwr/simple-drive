@@ -119,7 +119,7 @@ model File {
   updatedAt   DateTime @updatedAt
   folderId    String
   folder      Folder   @relation(fields: [folderId], references: [id], onDelete: Cascade)
-  storagePath String  @unique
+  storagePath String   @unique
 
   @@unique([publicId, folderId])
 }

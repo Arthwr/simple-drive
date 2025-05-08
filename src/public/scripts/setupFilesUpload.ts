@@ -9,17 +9,11 @@ let filesPayload: FileMap[] = [];
 
 const dropFile = document.getElementById('dropfile') as HTMLElement;
 const fileInput = document.getElementById('ufile') as HTMLInputElement;
-const previewContainer = document.getElementById(
-  'file-preview-container',
-) as HTMLElement;
-const confirmButton = previewContainer.querySelector(
-  'button',
-) as HTMLButtonElement;
+const previewContainer = document.getElementById('file-preview-container') as HTMLElement;
+const confirmButton = previewContainer.querySelector('button') as HTMLButtonElement;
 
 const previewList = document.getElementById('file-preview-list') as HTMLElement;
-const fileItemTemplate = document.getElementById(
-  'file-item-template',
-) as HTMLTemplateElement;
+const fileItemTemplate = document.getElementById('file-item-template') as HTMLTemplateElement;
 
 const folderInput = document.getElementById('folder-id') as HTMLInputElement;
 
@@ -27,6 +21,7 @@ function resetUploadUI() {
   filesPayload = [];
   updatePreviewVisibility();
   previewContainer.querySelector('.confirm-spinner')?.classList.add('hidden');
+  confirmButton.disabled = false;
 }
 
 function formatFileSize(bytes: number): string {
@@ -36,9 +31,7 @@ function formatFileSize(bytes: number): string {
   const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
   const index = Math.floor(Math.log(bytes) / Math.log(base));
 
-  return (
-    parseFloat((bytes / Math.pow(base, index)).toFixed(2)) + ' ' + sizes[index]
-  );
+  return parseFloat((bytes / Math.pow(base, index)).toFixed(2)) + ' ' + sizes[index];
 }
 
 function updatePreviewVisibility() {
@@ -55,17 +48,13 @@ function renderAndStoreFiles(fileList: File[]) {
   const fragment = document.createDocumentFragment();
 
   fileList.forEach((file) => {
-    const isDuplicate = filesPayload.some(
-      (entry) => entry.file.name === file.name && entry.file.size === file.size,
-    );
+    const isDuplicate = filesPayload.some((entry) => entry.file.name === file.name && entry.file.size === file.size);
 
     if (isDuplicate) return;
 
     const fileId = crypto.randomUUID();
 
-    const fileClone = fileItemTemplate.content.cloneNode(
-      true,
-    ) as DocumentFragment;
+    const fileClone = fileItemTemplate.content.cloneNode(true) as DocumentFragment;
 
     const fileItem = fileClone.querySelector('.file-item') as HTMLElement;
     const fileName = fileClone.querySelector('.file-name') as HTMLElement;
@@ -119,11 +108,11 @@ function handleFilesUpload() {
     formData.append('ufile', file);
   });
 
-  const buttonSpinner = previewContainer.querySelector(
-    '.confirm-spinner',
-  ) as HTMLElement;
-  buttonSpinner.classList.remove('hidden');
+  const buttonSpinner = previewContainer.querySelector('.confirm-spinner') as HTMLElement;
+  const buttonTextSpan = confirmButton.querySelector('span') as HTMLElement;
 
+  buttonSpinner.classList.remove('hidden');
+  buttonTextSpan.textContent = 'Uploading...';
   confirmButton.disabled = true;
 
   fetch(`/upload/${folderId}`, {
@@ -187,8 +176,7 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 export default function setupFilesUpload() {
-  if (!fileInput || !previewContainer || !fileItemTemplate || !confirmButton)
-    return;
+  if (!fileInput || !previewContainer || !fileItemTemplate || !confirmButton) return;
 
   fileInput.addEventListener('change', handleFiles);
   dropFile.addEventListener('dragover', (e) => e.preventDefault());

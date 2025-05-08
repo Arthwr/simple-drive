@@ -543,6 +543,41 @@ class UserService {
     await this.storageService.deleteFiles(pathsToDelete);
     await this.deleteUserFolderFromDB(userId, folderPublicId);
   }
+
+  async deleteUserFile(
+    userId: string,
+    folderPublicId: string,
+    filePublicId: string,
+  ) {
+    const storage = await this.userRepo.findStorageByUserId(userId);
+    if (!storage) throw new NotifyError('User storage not found', 404);
+
+    let parentFolderId: string | null = null;
+    if (folderPublicId) {
+      parentFolderId = await this.userRepo.findFolderIdByPublicId(
+        storage.id,
+        folderPublicId,
+      );
+    } else {
+      parentFolderId = await this.userRepo.findRootFolderId(storage.id);
+    }
+
+    if (!parentFolderId) {
+      throw new NotifyError('Parent folder of request file not found.', 404);
+    }
+
+    const fileToDelete = await this.userRepo.findFileByPublicIdFolderId(
+      parentFolderId,
+      filePublicId,
+    );
+
+    if (!fileToDelete) {
+      throw new NotifyError('Target file not found.', 404);
+    }
+
+    await this.storageService.deleteFiles([fileToDelete.storagePath]);
+    await this.deleteUserFileFromDB(userId, filePublicId, folderPublicId);
+  }
 }
 
 const userRepository = new UserRepository(prisma);

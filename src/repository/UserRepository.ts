@@ -178,6 +178,20 @@ class UserRepository {
     });
   }
 
+  async findFileByPublicIdFolderId(
+    parentFolderId: string,
+    publicFileId: string,
+  ): Promise<File | null> {
+    return this.prisma.file.findUnique({
+      where: {
+        publicId_folderId: {
+          folderId: parentFolderId,
+          publicId: publicFileId,
+        },
+      },
+    });
+  }
+
   // Write methods
   async addMember(email: string, password: string): Promise<User> {
     return this.prisma.user.create({
