@@ -41,11 +41,7 @@ class UserService {
     let children: TreeFolder[] | undefined = undefined;
 
     if (folderContents.children && folderContents.children.length > 0) {
-      children = await Promise.all(
-        folderContents.children.map(async (folder) =>
-          this.traverseFolders(folder.id),
-        ),
-      );
+      children = await Promise.all(folderContents.children.map(async (folder) => this.traverseFolders(folder.id)));
     }
 
     return {
@@ -64,15 +60,9 @@ class UserService {
       throw new NotifyError('User storage not found', 500, '/dashboard');
     }
 
-    const startFolderId = await this.userRepo.findFolderIdByPublicId(
-      storage.id,
-      publicFolderId,
-    );
+    const startFolderId = await this.userRepo.findFolderIdByPublicId(storage.id, publicFolderId);
     if (!startFolderId) {
-      throw new NotifyError(
-        'Failed to find requested folder in your storage',
-        500,
-      );
+      throw new NotifyError('Failed to find requested folder in your storage', 500);
     }
 
     const stack: string[] = [startFolderId];
@@ -87,8 +77,7 @@ class UserService {
 
       processedFolders.add(currentFolderId);
 
-      const { childrenIds, filePaths } =
-        await this.userRepo.findFolderChildrenAndFilePaths(currentFolderId);
+      const { childrenIds, filePaths } = await this.userRepo.findFolderChildrenAndFilePaths(currentFolderId);
 
       if (filePaths.length > 0) {
         allStoragePaths.push(...filePaths);
@@ -107,8 +96,7 @@ class UserService {
     let currentParentId: string | null = startFolder.parentId;
 
     while (currentParentId) {
-      const parentInfo =
-        await this.userRepo.findParentFolderById(currentParentId);
+      const parentInfo = await this.userRepo.findParentFolderById(currentParentId);
 
       if (!parentInfo || !parentInfo.parentId) {
         break;
@@ -121,9 +109,7 @@ class UserService {
     return ancestors.reverse();
   }
 
-  async getRootFolderTree(
-    rootFolderId: string,
-  ): Promise<{ folders: TreeFolder[]; files: TreeFile[] } | undefined> {
+  async getRootFolderTree(rootFolderId: string): Promise<{ folders: TreeFolder[]; files: TreeFile[] } | undefined> {
     const rootContent = await this.userRepo.findFolderContentById(rootFolderId);
     if (!rootContent) {
       throw new NotifyError('Root folder not found', 500);
@@ -142,11 +128,7 @@ class UserService {
     }
 
     if (rootContent.children) {
-      tree.folders = await Promise.all(
-        rootContent.children.map(async (folder) =>
-          this.traverseFolders(folder.id),
-        ),
-      );
+      tree.folders = await Promise.all(rootContent.children.map(async (folder) => this.traverseFolders(folder.id)));
     }
 
     return tree;
@@ -158,16 +140,10 @@ class UserService {
       throw new NotifyError('User storage not found', 500, '/dashboard');
     }
 
-    const rootFolder = await this.userRepo.findRootFolderWithContents(
-      storage.id,
-    );
+    const rootFolder = await this.userRepo.findRootFolderWithContents(storage.id);
 
     if (!rootFolder) {
-      throw new NotifyError(
-        'Cannot load root directory contents',
-        500,
-        '/dashboard',
-      );
+      throw new NotifyError('Cannot load root directory contents', 500, '/dashboard');
     }
 
     return this.getRootFolderTree(rootFolder.id);
@@ -182,16 +158,12 @@ class UserService {
       const currentFolderId = stack.pop();
       if (!currentFolderId) continue;
 
-      const folderContent =
-        await this.userRepo.findFolderContentById(currentFolderId);
+      const folderContent = await this.userRepo.findFolderContentById(currentFolderId);
 
       if (!folderContent) continue;
 
       if (folderContent.files && folderContent.files.length > 0) {
-        size += folderContent.files.reduce(
-          (acc, file) => acc + file.size,
-          BigInt(0),
-        );
+        size += folderContent.files.reduce((acc, file) => acc + file.size, BigInt(0));
       }
 
       if (folderContent.children && folderContent.children.length > 0) {
@@ -204,10 +176,7 @@ class UserService {
     return size;
   }
 
-  async getDirectoryData(
-    userId: string,
-    publicFolderId?: string,
-  ): Promise<DirectoryViewData> {
+  async getDirectoryData(userId: string, publicFolderId?: string): Promise<DirectoryViewData> {
     const storage = await this.userRepo.findStorageByUserId(userId);
 
     if (!storage) {
@@ -221,16 +190,10 @@ class UserService {
     let breadcrumbs: ParentFolderInfo[] = [];
 
     if (!publicFolderId) {
-      const implicitRoot = await this.userRepo.findRootFolderWithContents(
-        storage.id,
-      );
+      const implicitRoot = await this.userRepo.findRootFolderWithContents(storage.id);
 
       if (!implicitRoot) {
-        throw new NotifyError(
-          'Cannot load root directory contents',
-          500,
-          '/dashboard',
-        );
+        throw new NotifyError('Cannot load root directory contents', 500, '/dashboard');
       }
 
       currentFolder = implicitRoot;
@@ -239,10 +202,7 @@ class UserService {
       files = implicitRoot.files;
       breadcrumbs = [];
     } else {
-      const folderData = await this.userRepo.findFolderWithContents(
-        storage.id,
-        publicFolderId,
-      );
+      const folderData = await this.userRepo.findFolderWithContents(storage.id, publicFolderId);
 
       if (!folderData) {
         throw new NotifyError('Folder not found', 500, '/dashboard');
@@ -269,11 +229,7 @@ class UserService {
     return this.userRepo.addMember(userEmail, hashedPassword);
   }
 
-  async addUserFolder(
-    userId: string,
-    parentPublicFolderId: string | null,
-    folderName: string,
-  ) {
+  async addUserFolder(userId: string, parentPublicFolderId: string | null, folderName: string) {
     const storage = await this.userRepo.findStorageByUserId(userId);
     if (!storage) {
       throw new NotifyError('User storage not found', 404);
@@ -285,18 +241,12 @@ class UserService {
       const rootFolderId = await this.userRepo.findRootFolderId(storage.id);
 
       if (!rootFolderId) {
-        throw new NotifyError(
-          'Cannot find root directory to create folder in',
-          500,
-        );
+        throw new NotifyError('Cannot find root directory to create folder in', 500);
       }
 
       implicitFolderId = rootFolderId;
     } else {
-      const parentFolderId = await this.userRepo.findFolderIdByPublicId(
-        storage.id,
-        parentPublicFolderId,
-      );
+      const parentFolderId = await this.userRepo.findFolderIdByPublicId(storage.id, parentPublicFolderId);
 
       if (!parentFolderId) {
         throw new NotifyError('Parent folder was not found', 404);
@@ -305,19 +255,13 @@ class UserService {
       implicitFolderId = parentFolderId;
     }
 
-    const unique = await this.userRepo.isFolderNameUnique(
-      folderName,
-      implicitFolderId,
-      storage.id,
-    );
+    const unique = await this.userRepo.isFolderNameUnique(folderName, implicitFolderId, storage.id);
 
     if (!unique) {
       throw new NotifyError(
         'A folder with that name already exists in this location',
         409,
-        parentPublicFolderId
-          ? `/dashboard/${parentPublicFolderId}`
-          : '/dashboard',
+        parentPublicFolderId ? `/dashboard/${parentPublicFolderId}` : '/dashboard',
       );
     }
 
@@ -347,10 +291,7 @@ class UserService {
 
       primaryFolderId = rootFolderId;
     } else {
-      const folderId = await this.userRepo.findFolderIdByPublicId(
-        storage.id,
-        folderPublicId,
-      );
+      const folderId = await this.userRepo.findFolderIdByPublicId(storage.id, folderPublicId);
       if (!folderId) {
         throw new NotifyError('Cannot find directory to create file in', 500);
       }
@@ -358,13 +299,7 @@ class UserService {
       primaryFolderId = folderId;
     }
 
-    return this.userRepo.addFile(
-      fileName,
-      fileSize,
-      fileUrl,
-      primaryFolderId,
-      storagePath,
-    );
+    return this.userRepo.addFile(fileName, fileSize, fileUrl, primaryFolderId, storagePath);
   }
 
   // Delete methods
@@ -374,24 +309,15 @@ class UserService {
       throw new NotifyError('User storage not found', 404);
     }
 
-    const folderId = await this.userRepo.findFolderIdByPublicId(
-      storage.id,
-      folderPublicId,
-    );
+    const folderId = await this.userRepo.findFolderIdByPublicId(storage.id, folderPublicId);
     if (!folderId) {
-      throw new NotifyError(
-        'Failed to find requested folder in your storage',
-        500,
-      );
+      throw new NotifyError('Failed to find requested folder in your storage', 500);
     }
 
     try {
       return await this.userRepo.deleteFolder(folderId);
     } catch (error) {
-      if (
-        error instanceof Prisma.PrismaClientKnownRequestError &&
-        error.code === 'P2025'
-      ) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
         throw new NotifyError('Failed to delete requested folder', 500);
       }
 
@@ -399,35 +325,22 @@ class UserService {
     }
   }
 
-  async deleteUserFileFromDB(
-    userId: string,
-    filePublidId: string,
-    folderParentPublicId: string,
-  ) {
+  async deleteUserFileFromDB(userId: string, filePublidId: string, folderParentPublicId: string) {
     const storage = await this.userRepo.findStorageByUserId(userId);
     if (!storage) {
       throw new NotifyError('User storage not found', 404);
     }
 
-    const folderId = await this.userRepo.findFolderIdByPublicId(
-      storage.id,
-      folderParentPublicId,
-    );
+    const folderId = await this.userRepo.findFolderIdByPublicId(storage.id, folderParentPublicId);
 
     if (!folderId) {
-      throw new NotifyError(
-        'Failed to find requested folder in your storage',
-        500,
-      );
+      throw new NotifyError('Failed to find requested folder in your storage', 500);
     }
 
     try {
       return await this.userRepo.deleteFile(filePublidId, folderId);
     } catch (error) {
-      if (
-        error instanceof Prisma.PrismaClientKnownRequestError &&
-        error.code === 'P2025'
-      ) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
         throw new NotifyError('Failed to delete requested file', 500);
       }
 
@@ -436,11 +349,7 @@ class UserService {
   }
 
   // Orchestrate methods
-  async uploadAndRegisterFiles(
-    userId: string,
-    parentPublicFolderId: string | null,
-    files: Express.Multer.File[],
-  ) {
+  async uploadAndRegisterFiles(userId: string, parentPublicFolderId: string | null, files: Express.Multer.File[]) {
     if (!files || files.length === 0) {
       throw new NotifyError(FlashMessages.FILE_NOT_PROVIDED, 400);
     }
@@ -450,10 +359,7 @@ class UserService {
 
     let targetFolderId: string | null = null;
     if (parentPublicFolderId) {
-      targetFolderId = await this.userRepo.findFolderIdByPublicId(
-        storage.id,
-        parentPublicFolderId,
-      );
+      targetFolderId = await this.userRepo.findFolderIdByPublicId(storage.id, parentPublicFolderId);
     } else {
       targetFolderId = await this.userRepo.findRootFolderId(storage.id);
     }
@@ -515,49 +421,31 @@ class UserService {
         console.error('Database error saving file metadata:', error);
         // Attempt to cleanup failed files at StorageService
         await this.storageService.deleteFiles(pathsToCleanOnError);
-        throw new NotifyError(
-          'Failed to save some files after upload. Files were rolled back',
-          500,
-        );
+        throw new NotifyError('Failed to save some files after upload. Files were rolled back', 500);
       }
     }
 
     const successfulCount = results.filter((r) => r.success).length;
     const failedCount = files.length - successfulCount;
-    const errors = results
-      .filter((r) => !r.success)
-      .map((r) => r.message || 'Unknown error');
+    const errors = results.filter((r) => !r.success).map((r) => r.message || 'Unknown error');
 
     return { successfulCount, failedCount, errors };
   }
 
-  async deleteUserFolder(
-    userId: string,
-    folderPublicId: string,
-  ): Promise<void> {
-    const pathsToDelete = await this.getFileDescendantsStoragePaths(
-      userId,
-      folderPublicId,
-    );
+  async deleteUserFolder(userId: string, folderPublicId: string): Promise<void> {
+    const pathsToDelete = await this.getFileDescendantsStoragePaths(userId, folderPublicId);
 
     await this.storageService.deleteFiles(pathsToDelete);
     await this.deleteUserFolderFromDB(userId, folderPublicId);
   }
 
-  async deleteUserFile(
-    userId: string,
-    folderPublicId: string,
-    filePublicId: string,
-  ) {
+  async deleteUserFile(userId: string, folderPublicId: string, filePublicId: string) {
     const storage = await this.userRepo.findStorageByUserId(userId);
     if (!storage) throw new NotifyError('User storage not found', 404);
 
     let parentFolderId: string | null = null;
     if (folderPublicId) {
-      parentFolderId = await this.userRepo.findFolderIdByPublicId(
-        storage.id,
-        folderPublicId,
-      );
+      parentFolderId = await this.userRepo.findFolderIdByPublicId(storage.id, folderPublicId);
     } else {
       parentFolderId = await this.userRepo.findRootFolderId(storage.id);
     }
@@ -566,10 +454,7 @@ class UserService {
       throw new NotifyError('Parent folder of request file not found.', 404);
     }
 
-    const fileToDelete = await this.userRepo.findFileByPublicIdFolderId(
-      parentFolderId,
-      filePublicId,
-    );
+    const fileToDelete = await this.userRepo.findFileByPublicIdFolderId(parentFolderId, filePublicId);
 
     if (!fileToDelete) {
       throw new NotifyError('Target file not found.', 404);

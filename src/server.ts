@@ -79,17 +79,12 @@ server.listen(config.port, () => {
 // Check validation on submit (front-end)
 // Fix edge case where flash message will be stored if redirect fail
 // Change flash messages colors to something better (Success)
-// Add pause for flash messages on hover or tab switch perhaps?
-// Move icon load from partials/icons to public for better consistency?
 // Implement input validation for reg/login & other routes
 // Structure Flash Message into subcategories
-// During folders/files render - sort them against type (folder, file) and then alphabeticaly.
 // Possibly test against each error scenario
-// Implement size calculation for folders.
 // Folder @updatedAt right now only checks time of Folder model being updated itself,
 //  but not his relations. Implement bump function
 // Fix bug with flash messages appearing again during browser back redirect
-// Tune in specific item acception for upload
-// Files should be in custom field before uploaded
 // Remove elements folder
 // Fix color of successful client flash message icon
+// Input validation on folder name to fix a case with empty string name for folder.
