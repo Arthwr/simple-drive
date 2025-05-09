@@ -579,6 +579,9 @@
   .border-transparent {
     border-color: transparent;
   }
+  .bg-accent {
+    background-color: var(--color-accent);
+  }
   .bg-blue-500 {
     background-color: var(--color-blue-500);
   }

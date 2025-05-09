@@ -12,6 +12,15 @@ interface TreeFolder {
 let openFolders: Set<string> = new Set();
 let clickTimeout: ReturnType<typeof setTimeout> | null = null;
 
+function highlightCurrentFolder() {
+  const path = window.location.pathname;
+  const match = path.match(/\/dashboard\/([^/]+)/);
+  const folderId = match ? match[1] : null;
+
+  const folderButton = document.querySelector(`#tree-view button[data-folder-id="${folderId}"]`);
+  folderButton?.classList.add('bg-accent');
+}
+
 function saveOpenFolders() {
   localStorage.setItem('openFolders', JSON.stringify([...openFolders]));
 }
@@ -23,9 +32,7 @@ function loadOpenFolders(): Set<string> {
 
 function handleTreeClick(event: MouseEvent) {
   const target = event.target as HTMLElement;
-  const expandButton = target.closest(
-    '.folder-group > button',
-  ) as HTMLButtonElement;
+  const expandButton = target.closest('.folder-group > button') as HTMLButtonElement;
 
   if (!expandButton) return;
 
@@ -39,9 +46,7 @@ function handleTreeClick(event: MouseEvent) {
 
     if (childGroup) {
       childGroup.classList.toggle('hidden');
-      const chevronIcon = expandButton.querySelector(
-        '.chevron',
-      ) as HTMLImageElement;
+      const chevronIcon = expandButton.querySelector('.chevron') as HTMLImageElement;
 
       const folderId = expandButton.dataset.folderId;
 
@@ -84,9 +89,7 @@ function handleTreeDoubleClick(event: MouseEvent) {
   }
 }
 
-function buildTree(
-  structure: { folders: TreeFolder[]; files: TreeFile[] } | undefined,
-) {
+function buildTree(structure: { folders: TreeFolder[]; files: TreeFile[] } | undefined) {
   if (!structure) return;
 
   openFolders = loadOpenFolders();
@@ -96,12 +99,8 @@ function buildTree(
 
   const fragmentTreeStructure = document.createDocumentFragment();
 
-  const folderNodeTemplate = document.getElementById(
-    'folder-node',
-  ) as HTMLTemplateElement;
-  const fileNodeTemplate = document.getElementById(
-    'file-node',
-  ) as HTMLTemplateElement;
+  const folderNodeTemplate = document.getElementById('folder-node') as HTMLTemplateElement;
+  const fileNodeTemplate = document.getElementById('file-node') as HTMLTemplateElement;
 
   let indentationLevel = 4;
 
@@ -110,29 +109,19 @@ function buildTree(
     folder: TreeFolder,
     currentIndentationLevel: number,
   ) {
-    const folderGroupClone = folderNodeTemplate.content.cloneNode(
-      true,
-    ) as DocumentFragment;
+    const folderGroupClone = folderNodeTemplate.content.cloneNode(true) as DocumentFragment;
 
-    const folderButton = folderGroupClone.querySelector(
-      'button',
-    ) as HTMLElement;
-    const folderNameElement = folderGroupClone.querySelector(
-      '.node-name',
-    ) as HTMLElement;
+    const folderButton = folderGroupClone.querySelector('button') as HTMLElement;
+    const folderNameElement = folderGroupClone.querySelector('.node-name') as HTMLElement;
     folderNameElement.textContent = folder.name;
-    const childrenGroupElement = folderGroupClone.querySelector(
-      '.children-group',
-    ) as HTMLElement;
+    const childrenGroupElement = folderGroupClone.querySelector('.children-group') as HTMLElement;
 
     folderButton.dataset.folderId = folder.publicUrl;
     childrenGroupElement.classList.add(`pl-${currentIndentationLevel}`);
 
     if (openFolders.has(folder.publicUrl)) {
       childrenGroupElement.classList.remove('hidden');
-      const chevronIcon = folderButton.querySelector(
-        '.chevron',
-      ) as HTMLImageElement;
+      const chevronIcon = folderButton.querySelector('.chevron') as HTMLImageElement;
       if (chevronIcon) {
         chevronIcon.src = '/assets/img/tree-open.svg';
       }
@@ -140,23 +129,15 @@ function buildTree(
 
     if (folder.children && folder.children.length > 0) {
       folder.children.forEach((folderChild) => {
-        traverseFolders(
-          childrenGroupElement,
-          folderChild,
-          currentIndentationLevel,
-        );
+        traverseFolders(childrenGroupElement, folderChild, currentIndentationLevel);
       });
     }
 
     if (folder.files && folder.files.length > 0) {
       folder.files.forEach((file: TreeFile) => {
-        const fileNodeClone = fileNodeTemplate.content.cloneNode(
-          true,
-        ) as DocumentFragment;
+        const fileNodeClone = fileNodeTemplate.content.cloneNode(true) as DocumentFragment;
 
-        const fileName = fileNodeClone.querySelector(
-          '.node-name',
-        ) as HTMLElement;
+        const fileName = fileNodeClone.querySelector('.node-name') as HTMLElement;
         fileName.textContent = file.name;
 
         childrenGroupElement.append(fileNodeClone);
@@ -171,9 +152,7 @@ function buildTree(
   });
 
   structure.files.forEach((file) => {
-    const fileNodeClone = fileNodeTemplate.content.cloneNode(
-      true,
-    ) as DocumentFragment;
+    const fileNodeClone = fileNodeTemplate.content.cloneNode(true) as DocumentFragment;
     const fileName = fileNodeClone.querySelector('.node-name') as HTMLElement;
     fileName.textContent = file.name;
     fragmentTreeStructure.append(fileNodeClone);
@@ -200,6 +179,7 @@ export default async function setupTree() {
     const treeStructure = data.tree;
 
     buildTree(treeStructure);
+    highlightCurrentFolder();
   } catch (error) {
     console.error(error);
   }
