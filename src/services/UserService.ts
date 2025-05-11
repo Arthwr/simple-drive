@@ -302,6 +302,35 @@ class UserService {
     return this.userRepo.addFile(fileName, fileSize, fileUrl, primaryFolderId, storagePath);
   }
 
+  // Update methods
+  async renameFolder(userId: string, publicFolderId: string, name: string) {
+    const storage = await this.userRepo.findStorageByUserId(userId);
+    if (!storage) {
+      throw new NotifyError('User storage not found', 404);
+    }
+
+    const folderId = await this.userRepo.findFolderIdByPublicId(storage.id, publicFolderId);
+    if (!folderId) {
+      throw new NotifyError('Cannot find target directory', 404);
+    }
+
+    await this.userRepo.renameFolder(folderId, name);
+  }
+
+  async renameFile(userId: string, parentPublicFolderId: string, publicFileId: string, name: string) {
+    const storage = await this.userRepo.findStorageByUserId(userId);
+    if (!storage) {
+      throw new NotifyError('User storage not found', 404);
+    }
+
+    const folderId = await this.userRepo.findFolderIdByPublicId(storage.id, parentPublicFolderId);
+    if (!folderId) {
+      throw new NotifyError('Cannot find target directory', 404);
+    }
+
+    await this.userRepo.renameFile(folderId, publicFileId, name);
+  }
+
   // Delete methods
   async deleteUserFolderFromDB(userId: string, folderPublicId: string) {
     const storage = await this.userRepo.findStorageByUserId(userId);

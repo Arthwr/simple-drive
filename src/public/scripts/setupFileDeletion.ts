@@ -1,31 +1,6 @@
-import { showToastNotification } from './toast.js';
+import makeRequest from './request.js';
 
 const directoryElement = document.getElementById('directory') as HTMLElement;
-
-async function makeDelRequest(url: string, method: string = 'POST') {
-  try {
-    const response = await fetch(url, {
-      method: method,
-      headers: { Accept: 'application/json' },
-    });
-
-    const responseData = await response.json().catch(() => ({}));
-
-    if (!response.ok) {
-      const errorMessage = responseData?.message || `${response.status} ${response.statusText}`;
-
-      const errorType = responseData?.type || 'ERROR';
-      showToastNotification(errorType, errorMessage);
-
-      throw new Error(errorMessage);
-    }
-
-    return responseData;
-  } catch (error) {
-    console.error(`API delete request to ${url} failed: `, error);
-    throw error;
-  }
-}
 
 async function handleDirectoryDelButtonClick(event: MouseEvent) {
   const target = event.target as HTMLElement;
@@ -41,7 +16,7 @@ async function handleDirectoryDelButtonClick(event: MouseEvent) {
       deleteFolderButton.disabled = true;
 
       try {
-        const data = await makeDelRequest(`/delete/folder/${folderId}`, 'POST');
+        const data = await makeRequest(`/delete/folder/${folderId}`, 'POST');
 
         if (data?.type && data?.message) {
           localStorage.setItem('toast', JSON.stringify({ type: data.type, message: data.message }));
@@ -70,7 +45,7 @@ async function handleDirectoryDelButtonClick(event: MouseEvent) {
       deleteFileButton.disabled = true;
 
       try {
-        const data = await makeDelRequest(`/delete/file/${parentFolderId}/${fileId}`, 'POST');
+        const data = await makeRequest(`/delete/file/${parentFolderId}/${fileId}`, 'POST');
 
         if (data?.type && data?.message) {
           localStorage.setItem('toast', JSON.stringify({ type: data.type, message: data.message }));

@@ -8,6 +8,7 @@ import dashboardRoutes from './dashboard/dashboardRoutes';
 import indexRoutes from './index/indexRoutes';
 import deleteRouter from './storage/deleteRoutes';
 import folderRoutes from './storage/folderRoutes';
+import renameRouter from './storage/renameRoutes';
 import uploadRoutes from './storage/uploadRoutes';
 
 const routes = Router();
@@ -24,6 +25,7 @@ routes.use('/dashboard', isAuthenticated, dashboardRoutes);
 routes.use('/folder', isAuthenticated, folderRoutes);
 routes.use('/upload', isAuthenticated, uploadRoutes);
 routes.use('/delete', isAuthenticated, deleteRouter);
+routes.use('/rename', isAuthenticated, renameRouter);
 
 // API for different stuff (tree structure and etc)
 routes.use('/api', isAuthenticated, apiRouter);

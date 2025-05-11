@@ -1,6 +1,6 @@
 import capitalize from './utils/capitalize.js';
 
-enum FlashTypes {
+export enum FlashTypes {
   ERROR = 'error',
   SUCCESS = 'success',
   WARNING = 'warning',
@@ -8,9 +8,7 @@ enum FlashTypes {
 }
 
 const serverToast = document.getElementById('toast') as HTMLElement;
-const toastMessageTemplate = document.getElementById(
-  'toast-template',
-) as HTMLTemplateElement;
+const toastMessageTemplate = document.getElementById('toast-template') as HTMLTemplateElement;
 
 const iconCache: Record<FlashTypes, HTMLImageElement> = {
   [FlashTypes.SUCCESS]: new Image(),
@@ -34,20 +32,14 @@ export function showToastNotification(type: FlashTypes, message: string) {
   const clientToastShown = document.querySelector('.toast-client');
   if (clientToastShown) return;
 
-  const toastClone = toastMessageTemplate.content.cloneNode(
-    true,
-  ) as DocumentFragment;
+  const toastClone = toastMessageTemplate.content.cloneNode(true) as DocumentFragment;
 
   const toastElement = toastClone.querySelector('.toast-client') as HTMLElement;
-  const toastTypeElement = toastClone.querySelector(
-    '.toast-type',
-  ) as HTMLElement;
+  const toastTypeElement = toastClone.querySelector('.toast-type') as HTMLElement;
   const toastIcon = toastClone.querySelector('.toast-icon') as HTMLElement;
   const toastIconImg = toastClone.querySelector('img') as HTMLImageElement;
   const toastMessage = toastClone.querySelector('.toast-msg') as HTMLElement;
-  const progressBar = toastClone.querySelector(
-    '.toast-client > .t-progress',
-  ) as HTMLElement;
+  const progressBar = toastClone.querySelector('.toast-client > .t-progress') as HTMLElement;
 
   toastTypeElement.textContent = capitalize(type);
   toastTypeElement.classList.add(`text-flash-${type}`);

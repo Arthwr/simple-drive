@@ -1,11 +1,4 @@
-import {
-  File,
-  Folder,
-  PrismaClient,
-  RoleEnum,
-  Storage,
-  User,
-} from '@prisma/client';
+import { File, Folder, PrismaClient, RoleEnum, Storage, User } from '@prisma/client';
 
 import { ParentFolderInfo } from '../types/directory.types';
 
@@ -33,11 +26,7 @@ class UserRepository {
     });
   }
 
-  async isFolderNameUnique(
-    name: string,
-    parentId: string | null,
-    repositoryId: string,
-  ): Promise<boolean> {
+  async isFolderNameUnique(name: string, parentId: string | null, repositoryId: string): Promise<boolean> {
     const count = await this.prisma.folder.count({
       where: {
         name,
@@ -61,9 +50,7 @@ class UserRepository {
     return rootFolder?.id ?? null;
   }
 
-  async findParentFolderById(
-    parentId: string,
-  ): Promise<ParentFolderInfo | null> {
+  async findParentFolderById(parentId: string): Promise<ParentFolderInfo | null> {
     return this.prisma.folder.findUnique({
       where: {
         id: parentId,
@@ -77,9 +64,7 @@ class UserRepository {
     });
   }
 
-  async findFolderContentById(
-    folderId: string,
-  ): Promise<(Folder & { children: Folder[]; files: File[] }) | null> {
+  async findFolderContentById(folderId: string): Promise<(Folder & { children: Folder[]; files: File[] }) | null> {
     return this.prisma.folder.findUnique({
       where: {
         id: folderId,
@@ -91,10 +76,7 @@ class UserRepository {
     });
   }
 
-  async findFolderIdByPublicId(
-    repositoryId: string,
-    publicId: string,
-  ): Promise<string | null> {
+  async findFolderIdByPublicId(repositoryId: string, publicId: string): Promise<string | null> {
     const folder = await this.prisma.folder.findUnique({
       where: {
         repositoryId_publicId: {
@@ -110,9 +92,7 @@ class UserRepository {
     return folder?.id ?? null;
   }
 
-  async findFolderChildrenAndFilePaths(
-    folderId: string,
-  ): Promise<{ childrenIds: string[]; filePaths: string[] }> {
+  async findFolderChildrenAndFilePaths(folderId: string): Promise<{ childrenIds: string[]; filePaths: string[] }> {
     const folder = await this.prisma.folder.findUnique({
       where: {
         id: folderId,
@@ -159,10 +139,7 @@ class UserRepository {
   async findFolderWithContents(
     repositoryId: string,
     publicId: string,
-  ): Promise<
-    | (Folder & { children: Folder[]; files: File[]; parent: Folder | null })
-    | null
-  > {
+  ): Promise<(Folder & { children: Folder[]; files: File[]; parent: Folder | null }) | null> {
     return this.prisma.folder.findUnique({
       where: {
         repositoryId_publicId: {
@@ -178,10 +155,7 @@ class UserRepository {
     });
   }
 
-  async findFileByPublicIdFolderId(
-    parentFolderId: string,
-    publicFileId: string,
-  ): Promise<File | null> {
+  async findFileByPublicIdFolderId(parentFolderId: string, publicFileId: string): Promise<File | null> {
     return this.prisma.file.findUnique({
       where: {
         publicId_folderId: {
@@ -217,11 +191,7 @@ class UserRepository {
     });
   }
 
-  async addFolder(
-    repositoryId: string,
-    parentId: string | null,
-    name: string,
-  ): Promise<Folder> {
+  async addFolder(repositoryId: string, parentId: string | null, name: string): Promise<Folder> {
     return this.prisma.folder.create({
       data: {
         repositoryId,
@@ -231,13 +201,7 @@ class UserRepository {
     });
   }
 
-  async addFile(
-    name: string,
-    size: bigint,
-    url: string,
-    folderId: string,
-    storagePath: string,
-  ): Promise<File> {
+  async addFile(name: string, size: bigint, url: string, folderId: string, storagePath: string): Promise<File> {
     return this.prisma.file.create({
       data: {
         name,
@@ -260,6 +224,32 @@ class UserRepository {
   ) {
     return this.prisma.file.createMany({
       data: files,
+    });
+  }
+
+  // Update methods
+  async renameFolder(folderId: string, newName: string): Promise<Folder> {
+    return this.prisma.folder.update({
+      where: {
+        id: folderId,
+      },
+      data: {
+        name: newName,
+      },
+    });
+  }
+
+  async renameFile(parentFolderId: string, publicFileId: string, newName: string): Promise<File> {
+    return this.prisma.file.update({
+      where: {
+        publicId_folderId: {
+          publicId: publicFileId,
+          folderId: parentFolderId,
+        },
+      },
+      data: {
+        name: newName,
+      },
     });
   }
 

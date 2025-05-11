@@ -2,31 +2,10 @@ import config from '.';
 import formatFileSize from '../utils/formatFileSize';
 
 export const FileExtTypes: Record<string, string[]> = {
-  doc: [
-    '.doc',
-    '.docx',
-    '.odt',
-    '.rtf',
-    '.txt',
-    '.tex',
-    '.wpd',
-    '.pages',
-    '.md',
-  ],
+  doc: ['.doc', '.docx', '.odt', '.rtf', '.txt', '.tex', '.wpd', '.pages', '.md'],
   pdf: ['.pdf'],
   mus: ['.mp3', '.wav', '.flac', '.aac', '.ogg', '.wma', '.alac', '.m4a'],
-  image: [
-    '.jpg',
-    '.jpeg',
-    '.png',
-    '.gif',
-    '.bmp',
-    '.tiff',
-    '.webp',
-    '.svg',
-    '.heic',
-    '.raw',
-  ],
+  image: ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.tiff', '.webp', '.svg', '.heic', '.raw'],
 };
 
 export enum FlashTypes {
@@ -46,14 +25,17 @@ export const FlashMessages = {
   FILE_NUM_LIMIT: `Maximum file upload number is ${config.file_num_limit}`,
   FILE_SIZE_LIMIT: `Maximum file upload size is ${formatFileSize(config.file_size_limit)}`,
   FILE_NOT_PROVIDED: `Please attach the files before uploading`,
+  NO_EMPTY_NAME: 'Please provide valid non empty name',
   STORAGE: {
     FOLDER_SUCCES: 'New folder created!',
     FAILED_URL: 'Failed to construct file url',
     FAILED_UPLOAD: 'Upload failed, rolled back all uploaded files',
     FOLDER_DELETE_SUCCESS: 'Successfully deleted folder and all its contents',
-    FOLDER_DELETE_FAILED:
-      'Deletion failed. The folder and files remain unchanged',
+    FOLDER_DELETE_FAILED: 'Deletion failed. The folder and files remain unchanged',
     FILE_DELETE_SUCCESS: 'Successfully deleted requested file',
     FILE_DELETE_FAILED: 'Deletion failed. File(s) remain unchanged',
+    FOLDER_RENAME_SUCCESS: 'Successfuly renamed folder',
+    FILE_RENAME_SUCCESS: 'Successfuly renamed file',
+    RENAME_FAILED: 'Rename failed, name remain unchanged',
   },
 };
