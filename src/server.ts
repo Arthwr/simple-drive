@@ -16,6 +16,9 @@ import utils from './utils/utils';
 
 const server = express();
 
+// Render deploy
+server.set('trust proxy', 1);
+
 // Compression
 server.use(compression());
 
