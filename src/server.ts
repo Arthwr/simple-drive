@@ -82,7 +82,6 @@ server.listen(config.port, () => {
 // Implement input validation for reg/login & other routes
 // Structure Flash Message into subcategories
 // Possibly test against each error scenario
-// Folder @updatedAt right now only checks time of Folder model being updated itself,
 //  but not his relations. Implement bump function
 // Fix bug with flash messages appearing again during browser back redirect
 // Remove elements folder
