@@ -10,8 +10,7 @@ let filesPayload: FileMap[] = [];
 const dropFile = document.getElementById('dropfile') as HTMLElement;
 const fileInput = document.getElementById('ufile') as HTMLInputElement;
 const previewContainer = document.getElementById('file-preview-container') as HTMLElement;
-const confirmButton = previewContainer.querySelector('button') as HTMLButtonElement;
-
+const confirmButton = previewContainer?.querySelector('button') as HTMLButtonElement;
 const previewList = document.getElementById('file-preview-list') as HTMLElement;
 const fileItemTemplate = document.getElementById('file-item-template') as HTMLTemplateElement;
 

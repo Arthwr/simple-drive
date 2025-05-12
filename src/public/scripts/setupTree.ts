@@ -165,6 +165,9 @@ function buildTree(structure: { folders: TreeFolder[]; files: TreeFile[] } | und
 }
 
 export default async function setupTree() {
+  const treeElement = document.getElementById('tree');
+  if (!treeElement) return;
+
   try {
     const response = await fetch('/api/tree', {
       headers: { Accept: 'application/json' },

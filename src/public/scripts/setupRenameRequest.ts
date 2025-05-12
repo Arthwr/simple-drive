@@ -18,7 +18,6 @@ async function handleRenameRequest(entityId: string | undefined, parentEntityId:
     // Rename for file
     data = await makeRequest(`/rename/file/${parentEntityId}/${entityId}`, 'POST', JSON.stringify({ name: newName }));
   } else if (entityId) {
-    console.log('doing folder');
     // Rename for folder
     data = await makeRequest(`/rename/folder/${entityId}`, 'POST', JSON.stringify({ name: newName }));
   }
